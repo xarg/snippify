@@ -1,24 +1,3 @@
-# Create your views here.
-from django.shortcuts import get_object_or_404, render_to_response
-from django.http import HttpResponseRedirect
-from django.core.urlresolvers import reverse
-
-from logging import debug
-
-from snippify.snippets.models import Snippet #@PydevCodeAnalysisIgnore
-
-def index(request):
-    """ This is /home/ """
-    #snippet = get_object_or_404(Snippet)
-    #return render_to_response('snippets/index.html', {'snippet': snippet})
-    pass
-def my(request):
-    """ Your snippets """
-    pass
-def read(request, id):
-    snippet = get_object_or_404(Snippet, pk=id)
-    return render_to_response('snippets/snippet.html', {'snippet': snippet})
-
 from django.db.models import CharField
 
 try:

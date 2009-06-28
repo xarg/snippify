@@ -88,5 +88,5 @@ INSTALLED_APPS = (
     'snippify.snippets',    
     'snippify.directories',    
     'snippify.pages',    
-    #'snippify.tags'
+    'snippify.tags'
 )

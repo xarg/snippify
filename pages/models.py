@@ -4,7 +4,7 @@ from datetime import datetime
 
 class Page(models.Model):
     """ This model is used for serving static pages such as about/TOS etc.."""
-    title = models.TextField()
+    title = models.CharField(max_length=200, primary_key=True)
     body = models.TextField(blank = True)
     author = models.ForeignKey(User)
     date_created = models.DateField(default = datetime.now())
