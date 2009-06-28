@@ -5,9 +5,6 @@ try:
 except ImportError:
     from django.utils import uuid
 
-class UUIDVersionError(Exception):
-    pass
-
 class UUIDField(CharField):
     """ UUIDField for Django, supports all uuid versions which are natively
         suported by the uuid python module.
@@ -53,3 +50,6 @@ class UUIDField(CharField):
                 value = unicode(self.create_uuid())
                 setattr(model_instance, self.attname, value)
         return value
+
+class UUIDVersionError(Exception):
+    pass

@@ -4,11 +4,11 @@ from datetime import datetime
 
 from snippify.tags.models import Tag
 from snippify.directories.models import Directory
-#from snippify.types.uuid import UUIDField
+from snippify.types.uuid import UUIDField
 
 class Snippet(models.Model):
     """ A snippet has one directory and many tags, comments, versions """
-    uuid = UUIDField(primaryKey = True);    
+    uuid = UUIDField(max_lenght= 200, primaryKey = True);    
     tags = models.ManyToManyRel(Tag)
     directory = models.ForeignKey(Directory)    
     owner = models.ForeignKey(User)
