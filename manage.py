@@ -12,26 +12,4 @@ if __name__ == "__main__":
     
     if len(sys.argv) > 1:
         command = sys.argv[1]
-    if(command != "runserver"): # Run from console
-        execute_manager(settings)
-    if settings.DEBUG and (command == "runserver" or command == "testserver"):
-        # Make pydev debugger works for auto reload.
-        try:
-            import pydevd
-        except ImportError:            
-            sys.stderr.write("Error: You must add org.python.pydev.debug.pysrc to your PYTHONPATH.")
-            sys.exit(1)
-        from django.utils import autoreload
-        m = autoreload.main
-        def main(main_func, args=None, kwargs=None):
-            import os
-            if os.environ.get("RUN_MAIN") == "true":
-                def pydevdDecorator(func):
-                    def wrap(*args, **kws):
-                        pydevd.settrace(suspend=False, port=5678)
-                        return func(*args, **kws)
-                    return wrap
-                main_func = pydevdDecorator(main_func)
-            return m(main_func, args, kwargs)
-        autoreload.main = main
-        execute_manager(settings)
+    execute_manager(settings)
