@@ -12,7 +12,7 @@
 <body>
 <div id="wrapper">
 	{% if home_page %}
-		<div id="seotext" class="boxed clearfix">
+		<div id="seotext" class="boxed {% if user.is_authenticated %}logged{% endif %} clearfix">
 			<h1><a href="/">Code Snippets</a> | Snippify.me</h1>
 			<h2>The social way of posting code</h2>
 			<p>The posting is very simple. Write or paste your code. Tag it appropriately. Then share with your teammates, co-workers and friends.</p>

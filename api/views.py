@@ -2,7 +2,7 @@ from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
 from snippify.snippets.models import Snippet
-from django_authopenid.models import UserProfile
+from snippify.django_authopenid.models import UserProfile
 from django.contrib.auth.models import User
 
 from snippify.snippets.forms import SnippetForm

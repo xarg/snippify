@@ -11,7 +11,7 @@ from django.template.loader import render_to_string
 from snippify.snippets.forms import SnippetForm
 from snippify.snippets.models import Snippet, SnippetVersion, SnippetComment
 from snippify.emails.models import EmailQueue
-from django_authopenid.models import UserProfile, UserFollow
+from snippify.django_authopenid.models import UserProfile, UserFollow
 
 from snippify.utils import build_context, JsonResponse
 

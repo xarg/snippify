@@ -12,8 +12,8 @@ from django import forms
 from snippify.snippets.models import Snippet
 from snippify.utils import build_context
 
-from django_authopenid.models import UserProfile
-from django_authopenid.models import UserFollow
+from snippify.django_authopenid.models import UserProfile
+from snippify.django_authopenid.models import UserFollow
 from snippify.emails.models import EmailQueue
 
 from tagging.models import Tag
