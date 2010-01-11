@@ -23,8 +23,10 @@ ul{ list-style:none; }
 	margin:0px auto;
 }
 #header{
-	width: 100%;
+	width: 965px;
 	padding-bottom:4px;
+	position:absolute;
+	top:0;
 }
 #header #logo a {
 	float: left;
@@ -63,6 +65,7 @@ ul{ list-style:none; }
 	border-radius:10px;
 	background:#fff;
 	padding:20px;
+	margin-top:71px;
 }
 #main.intro {
 	-moz-border-radius:0px;
@@ -533,6 +536,7 @@ div.gravatar {
 }
 dt {
 	font-size:16px;
+	font-weight:bold;
 	padding-bottom:2px;
 }
 dd {
@@ -768,6 +772,16 @@ a.openid_large_btn:focus {
 #seotext a {
 	color:#fff;
 }
+.pluginslist li {
+	display:block;
+	float:left;
+	text-align:center;
+	width:230px;
+}
+.pluginslist li a img {
+	border:none;
+}
+
 /**
 	End OpenID CSS
 **/
