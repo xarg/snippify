@@ -8,7 +8,14 @@ from pygments.lexers import guess_lexer, get_lexer_by_name, LEXERS
 from tagging.fields import TagField
 from tagging.models import Tag
 
-
+ADDED_VIA = (
+	('web', 'Web'),
+	('firefox', 'Firefox'),
+	('komodo', 'Komodo'),
+	('netbeans', 'Netbeans'),
+	('eclipse', 'Eclipse'),
+	('unknown', 'Unknown'),
+)
 
 # Search
 from djapian import space, Indexer
@@ -31,7 +38,7 @@ class Snippet(models.Model):
 		@todo: pygments + autodiscovery
 	"""
 	author = models.ForeignKey(User)
-	title = models.CharField(max_length = 200, blank = True, help_text = 'Ex. Django URL middleware')
+	title = models.CharField(max_length = 200, help_text = 'Ex. Django URL middleware')
 	description = models.TextField(blank = True, help_text = 'Short description of your snippet')
 	lexer = models.CharField(
 		max_length = 50,
@@ -59,6 +66,7 @@ class Snippet(models.Model):
 		)
 	)
 	tags = TagField()
+	via = models.CharField(max_length = 50, default = 'web', choices = ADDED_VIA) # Used to provide some kind of stats
 	def __unicode__(self): return self.title
 
 	def highlight(self, body = '', lexer = None):

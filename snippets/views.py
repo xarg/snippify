@@ -36,7 +36,7 @@ def delete(request, id=None):
 	if snippet.author_id == request.user.id or request.user.is_staff:
 		snippet.delete()
 		request.session['flash'] = ['#'+str(id)+' deleted succesfully', 'success']
-		return HttpResponseRedirect(request.GET.get('next', '/'))
+		return HttpResponseRedirect('/accounts/profile/')
 	else:
 		request.session['flash'] = ['Access denied', 'error']
 def read(request, id=None):
@@ -56,7 +56,6 @@ def read(request, id=None):
 			'comments': comments,
 			'versions': versions,
 			'lines': range(1, snippet.body.count('\n')+2),
-			'referer': request.META.get('HTTP_REFERER', '/')
 		},
 		context_instance=build_context(request)
 	)
@@ -123,7 +122,7 @@ def update(request, id=None):
 				if 'delete' in request.POST:
 					snippet.delete()
 					request.session['flash'] = ['#' + str(formData.pk) +' deleted successfuly', 'sucess']
-					return HttpResponseRedirect(request.POST.get('referer', '/accounts/profile/'))
+					return HttpResponseRedirect('/accounts/profile/')
 				if 'preview' in request.POST:
 					data = {}
 					data['title'] = formData.title;
@@ -152,12 +151,12 @@ def update(request, id=None):
 							create_version = SnippetVersion(snippet = snippet, version = 1, body = snippet.body)
 							create_version.save()
 					request.session['flash'] = ['#' + str(formData.pk) +' updated successfuly', 'sucess'];
-					return HttpResponseRedirect('/update/' + str(formData.pk)) # Redirect after POST
+					return HttpResponseRedirect('/accounts/profile/') # Redirect after POST
 			else:
 			   	return render_to_response('snippets/process.html', {'form': form }, context_instance=build_context(request))
 		else:
 			form = SnippetForm(instance=snippet)
-		return render_to_response('snippets/process.html', {'form': form, 'snippet': snippet, 'referer': request.META.get('HTTP_REFERER', '/') }, context_instance=build_context(request))
+		return render_to_response('snippets/process.html', {'form': form, 'snippet': snippet }, context_instance=build_context(request))
 	else:
 		request.session['flash'] = ['Access denied', 'error'];
 		return HttpResponseRedirect('/accounts/profile/') # Redirect after POST
@@ -218,7 +217,7 @@ def comment(request, id = None):
 			request.session['flash'] = ['Comment deleted succesfully', 'success'];
 		else:
 			request.session['flash'] = ['Permission denied', 'error'];
-		return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+		return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/accounts/profile/'))
 	else:
 		data = {}
 		snippet = get_object_or_404(Snippet, pk=id)
