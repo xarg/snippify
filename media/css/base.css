@@ -754,8 +754,11 @@ a.openid_large_btn:focus {
 	color:#d1e8ff;
 	position:absolute;
 	width:228px;
-	top:539px;
+	top:578px;
 	margin-bottom:20px;
+}
+#seotext.logged {
+	top:539px;
 }
 #seotext h1 { font-size:14px; }
 #seotext h2 { font-size:12px; font-weight:bold; padding-bottom:12px }
