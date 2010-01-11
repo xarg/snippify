@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Careful now! You are leaving the site!{% endblock %}
+{% block content %}
+<h1>You are now leaving snippify.me !</h1>
+<h3>You have clicked on a link that will direct you outside of our site.<br />You'd better watch out, the internet can sometimes be a nasty place!</h3><br />
+<h3>If you think that is a safe place, then you can click on the button below</h3>
+<br /><br />
+<a href="javascript:back()" class="download-snippet" style="margin-left:0;">Back to snippify.me</a> <a href="#" class="edit-snippet">Proceed to [SITE-URL]</a><br /><br />
+
+{% endblock %}

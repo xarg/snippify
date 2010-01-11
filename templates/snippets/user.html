@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}My snippets{% endblock %}
+{% block content %}
+{% if snippets %}
+<ul>
+{% for snippet in snippets %}
+<li><a href="/{{snippet.pk}}">{{snippet.title}}</a></li>
+{% endfor%}
+</ul>
+{% else %}
+No snippets
+{% endif %}
+{% endblock %}

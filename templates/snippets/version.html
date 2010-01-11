@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}#{{snippet.pk}} v{{version}}{% endblock %}
+{% block head %}<link rel="stylesheet" type="text/css" media="all" charset="utf-8" href="{{MEDIA_URL}}css/pygments.css"/>{% endblock %}
+{% block extra_scripts %}<script type="text/javascript" src="{{MEDIA_URL}}js/snippets.js"></script>{% endblock %}
+{% block content %}
+<h1><a href="/{{snippet.pk}}">{{snippet.title}}</a> v{{version}}</h1>
+<div class="snippet">
+	<div class="snippet-code highlight">
+		<table>
+			<tbody>
+				<tr>
+					<td class="linenos" valign="top">
+					<pre>{% for lineno in lines %}
+{{lineno}}{% empty %}&nbsp;{% endfor%}</pre></td>
+					<td class="code" valign="top">{% autoescape off %}{{body}}{% endautoescape %}</td>
+				</tr>
+			</tbody>
+		</table>
+    </div>
+</div>
+{% endblock %}

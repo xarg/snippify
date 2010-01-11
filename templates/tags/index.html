@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% load tagging_tags %}
+{% block title %}Tags{% endblock%}
+{% block content %}
+<h1>Tags</h1>
+<div class="tag-cloud">
+{% tag_cloud_for_model snippets.snippet as cloud with steps=2 min_count=1 distribution=log %}
+{% for tag in cloud %}
+	<a href="/tag/{{tag}}" class="tag-item" style="font-size: {{tag.font_size}}em">{{tag}}</a>
+{% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,11 @@
+{% block content %}{% endblock %}
+
+Best regards,
+Sasha
+
+--
+Change your snipify.me email settings here (login required):
+http://{{SITE}}/accounts/edit/
+
+To directly unsubscribe from all emails:
+http://{{SITE}}/accounts/unsubscribe/?key={{user.get_profile.restkey}}

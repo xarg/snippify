@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% block title %}Who {{userdata.username}} is following{% endblock %}
+{% block content %}
+<h1><a href="/accounts/{{userdata.username}}">{{userdata.username}}</a>  is following {{users.count}} users</h1>
+{% include "elements/follow_list.html" %}
+{% endblock %}

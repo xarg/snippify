@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% load tagging_tags %}
+{% block head %}
+<link rel="stylesheet" type="text/css" media="all" charset="utf-8" href="{{MEDIA_URL}}css/pygments.css"/>
+{% endblock %}
+{% block extra_scripts %}
+<script type="text/javascript" src="{{MEDIA_URL}}js/snippets.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}js/post-comment.js"></script>
+{% endblock %}
+{% block title %}#{{ snippet.pk }} - {{ snippet.title }}{% endblock %}
+{% block content %}
+<div class="snippet">
+    <div class="snippet-title">
+		<div class="snippet-tools">
+			{% if snippet.author_id == user.id or user.is_staff %}
+			<a href="/delete/{{snippet.pk}}/?next={{referer}}" class="delete-snippet" onclick="return confirm('Are you sure?')">Delete</a>
+			{% endif %}
+			{% if snippet.author_id == user.id %}
+			<a href="/update/{{snippet.pk}}/" class="edit-snippet">Edit</a>
+			{% endif %}
+			{% if versions %}
+			<a href="/history/{{snippet.pk}}/" class="hist-snippet">History</a>
+			{% endif %}
+			<a href="/download/{{snippet.pk}}" class="download-snippet">Download</a>
+		</div>
+		<h1>{{ snippet.title }}</h1>
+	    <div class="snippet-description">
+			{{snippet.description|linebreaks}}
+		</div>
+		<h6><em class="author">by <a href="/accounts/{{snippet.author}}">{{snippet.author}}</a></em> <em class="time-ago">{{snippet.created_date|timesince}} ago</em> and tagged with: {% tags_for_object snippet as tags %}
+			{% for tag in tags %}
+				<a href="/tag/{{tag}}">{{tag}}</a>
+			{% endfor %}
+		</h6>
+    </div>
+    <div class="snippet-code highlight">
+		<table>
+			<tbody>
+				<tr>
+					<td class="linenos" valign="top">
+					<pre>{% for lineno in lines %}
+{{lineno}}{% empty %}&nbsp;{% endfor%}</pre></td>
+					<td class="code" valign="top">{% autoescape off %}{{snippet.highlight_body}}{% endautoescape %}</td>
+				</tr>
+			</tbody>
+		</table>
+    </div>
+	<div class="snippet-comments" id="snippet-comments">
+		<h2>Currently {{comments.object_list.count}} comment{{comments.object_list.count|pluralize}}</h2>
+		<div class="comment-list">
+		{% for comment in comments.object_list %}
+			{% include "elements/comment.html" %}
+		{% endfor %}
+		</div>
+		{% if comments.paginator.num_pages > 1 %}
+		<div class="comment-pagination">
+			<span class="step-links">
+				{% if comments.has_previous %}
+					<a href="?page={{ comments.previous_page_number }}">previous</a>
+				{% endif %}
+				<span class="current">
+					Page {{ comments.number }} of {{ comments.paginator.num_pages }}
+				</span>
+				{% if comments.has_next %}
+					<a href="?page={{ comments.next_page_number }}">next</a>
+				{% endif %}
+			</span>
+		</div>
+		{% endif %}
+		{% if not user.is_authenticated %}
+		<div class="not-logged-in">To post a comment, you must <a href="/account/signin">login</a>.</div>
+		{% else %}
+		<div class="comment-preview" style="display: none">
+			<h3>Preview comment</h3>
+			<p class="content"></p>
+		</div>
+		<div class="post-comment">
+			<h3>Leave a comment</h3>
+			<div class="comment-error"></div>
+			<div class="comment-form">
+				<form action="/comment/{{snippet.pk}}/" method="post">{% csrf_token %}
+					<div class="input clearfix">
+						<textarea id="id_comment" name="body" cols="40" rows="10"></textarea>
+					</div>
+					<div class="submit">
+						<input class="submit-button save" type="submit" name="submit" value="Save"/>
+						<a class="submit-button preview-comment">Preview</a>
+					</div>
+				</form>
+			</div>
+		</div>
+		{% endif %}
+	</div>
+</div>
+{% endblock %}

@@ -1,0 +1,9 @@
+{% extends "emails/layout.txt" %}
+{% block content %}
+Hi {{user.username}},
+
+{{username_that_follows}} started following you.
+
+You can check out his/her profile here:
+http://{{SITE}}/accounts/{{username_that_follows}}
+{% endblock %}

@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% load tagging_tags %}
+{% block title %}{{tag}} snippets{% endblock%}
+{% block content %}
+<div class="snippet-list">
+<a href="/tags" class="righted">See all tags</a>
+<h1>Snippets tagged with <span>{{tag}}</span></h1>
+{% include "elements/snippet_list.html" %}
+</div>
+{% endblock %}

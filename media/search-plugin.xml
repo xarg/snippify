@@ -1,0 +1,8 @@
+<SearchPlugin xmlns="http://www.mozilla.org/2006/browser/search/" xmlns:os="http://a9.com/-/spec/opensearch/1.1/">
+<os:ShortName>snippify.me</os:ShortName>
+<os:Description>snippify.me snippets storage site</os:Description>
+<os:InputEncoding>UTF-8</os:InputEncoding>
+<Image width="16" height="16" type="image/x-icon">http://snippify.me/favicon.ico</Image>
+<os:Url type="text/html" method="GET" template="http://snippify.me/search/{searchTerms}">
+</os:Url>
+</SearchPlugin>

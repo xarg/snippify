@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% block title %}{{userdata.username}}'s followers{% endblock %}
+{% block content %}
+<h1><a href="/accounts/{{userdata.username}}">{{userdata.username}}</a> has {{users.count}} followers</h1>
+{% include "elements/follow_list.html" %}
+{% endblock %}

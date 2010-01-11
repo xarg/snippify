@@ -1,0 +1,10 @@
+<div class="user-list">
+{% for user in users %}
+	<div class="user-item clearfix">
+		<p class="gravatar"><a href="/accounts/{{user.user.username}}">{% gravatar user.user.email %}</a></p>
+		<p class="username"><a href="/accounts/{{user.user.username}}">{{user.user.username}}</a> from {{user.user.location}}&nbsp;ulan bator</p>
+		<p class="description"><em>{{user.user.description}}dsalkjslsajdljkasdkjsksda
+dasklsajkldasklsdaljkdaslsljka</em></p>
+	</div>
+{% endfor %}
+</div>

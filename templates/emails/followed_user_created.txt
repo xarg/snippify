@@ -1,0 +1,9 @@
+{% extends "emails/layout.txt" %}
+{% block content %}
+Hi {{user.username}},
+
+{{username}} (which is a user you follow) created one or more snippets.
+
+You can check it out his/her profile:
+http://{{SITE}}/accounts/{{username}}
+{% endblock %}

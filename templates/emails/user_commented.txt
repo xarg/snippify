@@ -1,0 +1,11 @@
+{% extends "emails/layout.txt" %}
+{% block content %}
+Hi {{user.username}},
+
+{{username}} commented on one of your snippets:
+
+"{{comment.body}}"
+
+Check it out here:
+http://{{SITE}}/{{snippet.pk}}/
+{% endblock %}

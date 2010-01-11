@@ -1,1 +1,3 @@
-*.db
+*.pyc
+djapian_spaces/*
+django.wsgi

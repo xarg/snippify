@@ -7,17 +7,23 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
-    # ('Your Name', 'your_email@domain.com'),
 )
+
+DEFAULT_FROM_EMAIL = 'robot@snippify.me'
+DEFAULT_REPLYTO_EMAIL = 'sasha@snippify.me'
 
 MANAGERS = ADMINS
 
-DATABASE_ENGINE = 'sqlite3'           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-DATABASE_NAME = PROJECT_PATH + 'data/snippify.db'             # Or path to database file if using sqlite3.
-DATABASE_USER = ''             # Not used with sqlite3.
-DATABASE_PASSWORD = ''         # Not used with sqlite3.
-DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
-DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+        'NAME': 'snippify',                      # Or path to database file if using sqlite3.
+        'USER': 'snippify',                      # Not used with sqlite3.
+        'PASSWORD': 'snippify',                  # Not used with sqlite3.
+        'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
+        'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
+    }
+}
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -34,37 +40,52 @@ SITE_ID = 1
 
 # If you set this to False, Django will make some optimizations so as not
 # to load the internationalization machinery.
-USE_I18N = True
+USE_I18N = False
 
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
-MEDIA_ROOT = PROJECT_PATH + '../media'
+MEDIA_ROOT = PROJECT_PATH + 'media/'
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
-MEDIA_URL = 'http://projects/django/media/'
+MEDIA_URL = 'http://media/'
 
+# URL for the project
+URL = 'http://'
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.
 # Examples: "http://foo.com/media/", "/media/".
 ADMIN_MEDIA_PREFIX = '/media/'
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = 'se&(t0+qyfy!#0d=(3g(y@y8^v1#axnett&7u3+9l^ma#xm1tx'
+SECRET_KEY = ''
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
-    'django.template.loaders.filesystem.load_template_source',
-    'django.template.loaders.app_directories.load_template_source',
+	'django.template.loaders.filesystem.load_template_source',
+	'django.template.loaders.app_directories.load_template_source',
 #     'django.template.loaders.eggs.load_template_source',
 )
 
+TEMPLATE_CONTEXT_PROCESSORS = (
+	'django.core.context_processors.auth',
+	'django.core.context_processors.debug',
+	'django.core.context_processors.i18n',
+	'django.core.context_processors.media',
+	'django.core.context_processors.request',
+	'django_authopenid.context_processors.authopenid'
+)
+
 MIDDLEWARE_CLASSES = (
-    'firepy.django.middleware.FirePHPMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware'
+	'firepy.django.middleware.FirePHPMiddleware',
+	'django.middleware.common.CommonMiddleware',
+	'django.contrib.sessions.middleware.SessionMiddleware',
+	'django.contrib.auth.middleware.AuthenticationMiddleware',
+	'django.middleware.doc.XViewMiddleware',
+	'django_authopenid.middleware.OpenIDMiddleware',
+	'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
+	'django.middleware.csrf.CsrfViewMiddleware',
 )
 
 ROOT_URLCONF = 'snippify.urls'
@@ -77,16 +98,25 @@ TEMPLATE_DIRS = (
 )
 
 INSTALLED_APPS = (
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.sites',
-    
-    'django.contrib.admin',
-    'django.contrib.admindocs',
-    
-    'snippify.snippets',    
-    'snippify.directories',    
-    'snippify.pages',    
-    'snippify.tags'
+	'django.contrib.auth',
+	'django.contrib.contenttypes',
+	'django.contrib.sessions',
+	'django.contrib.sites',
+	'django.contrib.admin',
+	'django.contrib.syndication',
+	'globaltags',
+	'tagging',
+	'django.contrib.flatpages',
+	'django_authopenid',
+	'djapian',
+	#'piston',
+	'snippify.snippets',
+	'snippify.emails',
 )
+
+DJAPIAN_DATABASE_PATH = './djapian_spaces/'
+
+# My settings
+AUTH_PROFILE_MODULE = 'django_authopenid.UserProfile'
+LOGIN_REDIRECT_URL = '/accounts/profile'
+ACCOUNT_ACTIVATION_DAYS = 5

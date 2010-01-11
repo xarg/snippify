@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Error 404: Page Not Found{% endblock %}
+{% block content %}
+<p class="righted"><img src="{{MEDIA_URL}}images/404.png" alt="Error 404: Page Not Found" /></p>
+<h1>Houston, we have a problem!</h1>
+<h3>The page that you are looking for seems to be no longer available.</h3><br />
+<h3>You might have followed a broken or a mistyped link. Please double check and try again</h3><br />
+<h3>Now what? You can go to <a href="/">the first page</a>. Also, you can browse our <a href="/tags/">snippets' tags</a> or <a href="javascript:qsearch();">search</a> for something. Or you could <a href="/account/login">login</a>. </h3>
+
+{% endblock %}

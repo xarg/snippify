@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% load tagging_tags %}
+{% block title %}My profile{% endblock %}
+{% block content %}
+<div id="sidebar" class="clearfix">
+	<div class="profile-details">
+		<div class="gravatar clearfix">
+			{% gravatar user.email %}
+			<h3>{{user.username}}</h3>
+			<a class="" href="/accounts/edit/">Edit my profile details</a>
+		</div>
+		<p><strong class="label">Location</strong><br /> {{profile.location}}</p>
+		<p><strong class="label">E-mail</strong><br /> {{user.email}}</p>
+		<p><strong class="label">URL</strong><br /> {{profile.url|urlize}}</p>
+		<p><strong class="label">About</strong><br /> {{profile.about|urlize}}</p>
+		<p><strong class="label">Private key</strong><br /> <a href="javascript:void(0)" id="show-restkey">click to show private key</a> <span id="the-restkey">{{profile.restkey}}</span> <a href="/accounts/refresh_key">refresh key</a></p>
+	</div>
+	{% if followed_users %}
+	<div class="followed-list">
+		<h2>Following {{followed_users.count}} users</h2>
+		<div class="followed-users clearfix">
+		{% for follower in followed_users %}		
+			<div class="followed-user"><a href="/accounts/{{follower.followed_user.username}}" title="{{follower.followed_user.username}}">{% gravatar follower.followed_user.email 24 %}</a></div>
+		{% endfor %}
+		</div>
+		<a href="/accounts/following/{{user.username}}" class="followed-list-link">view all &raquo;</a>
+	</div>
+	{% endif %}
+	{% if followers %}
+	<div class="followed-list">
+		<h2>{{followers.count}} followers</h2>		
+		<div class="followers-users clearfix">
+		{% for follower in followers %}		
+			<div class="followed-user"><a href="/accounts/{{follower.user.username}}" title="{{follower.user.username}}">{% gravatar follower.user.email 24 %}</a></div>
+		{% endfor %}
+		</div>
+		<a href="/accounts/followers/{{user.username}}" class="followers-list-link">view all &raquo;</a>
+	</div>
+	{% endif %}
+</div>
+<div id="container" class="clearfix">
+	<h1>My profile</h1>
+	<div class="snippet-list">
+		<h2>My snippets</h2>
+		{% if snippets %}
+		{% for snippet in snippets %}
+		<div class="snippet-teaser">
+			<h3><a href="/{{snippet.pk}}">{{snippet.title}}</a></h3>
+			<p>{{snippet.description}}</p>
+			<p class="snippet-meta">Added on: <em>{{snippet.created_date|date:"d F Y"}}</em>
+			{% if snippet.tags %}
+			{% tags_for_object snippet as tags %}
+			and tagged with: <em>{% for tag in tags %}<a href="/tag/{{tag}}">{{tag}}</a> {% endfor %}</em>
+			{% endif %}
+			</p>
+			<a class="edit-link" href="/update/{{snippet.pk}}">edit</a>
+			<a class="delete-link" onclick="return confirm('Are you sure?')" href="/delete/{{snippet.pk}}">delete</a>
+		</div>
+		{% endfor %}
+		{% else %}
+		<p class="empty">No snippets</p>
+		{% endif %}
+	</div>
+	<div class="tag-list">
+		<h2>My tags</h2>
+		{% if tags %}
+		{% for tag in tags %}
+			<a href="/tag/{{tag}}/{{user.username}}">{{tag}}</a>
+		{% endfor %}
+		{% else %}
+		<p class="empty">No tags</p>
+		{% endif %}
+	</div>
+
+</div>
+{% endblock %}

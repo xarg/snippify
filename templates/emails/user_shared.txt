@@ -1,0 +1,9 @@
+{% extends "emails/layout.txt" %}
+{% block content %}
+Hi {{user.username}},
+
+{{username}} shared with you a snippet.
+
+Check it out:
+{{SITE}}/{{snippet.pk}}
+{% endblock %}

@@ -1,13 +1,96 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
-    <meta http-equiv="Content-Language" content="en-us" />
-	<title>{% block title%}This is the default template{% endblock%}</title>
-	
+	<meta http-equiv="Content-Language" content="en-us" />
+	<title>{% block title%}!!!Change the title!!!{% endblock%} | Snippify.me</title>
+	<link rel="shortcut icon" href="{{MEDIA_URL}}images/favico.ico" />
+	<link rel="search" type="application/opensearchdescription+xml" title="Snippify.me" href="{{MEDIA_URL}}search-plugin.xml" />
+	<link rel="stylesheet" type="text/css" media="all" charset="utf-8" href="{{MEDIA_URL}}css/base.css"/>
+	{% block head %}{% endblock %}
 </head>
 <body>
-{{ get_media_url }}
-{% block content %}Here we have the content{% endblock %}
+<div id="wrapper">
+	{% if home_page %}
+		<div id="seotext" class="boxed clearfix">
+			<h1><a href="/">Code Snippets</a> | Snippify.me</h1>
+			<h2>The social way of posting code</h2>
+			<p>The posting is very simple. Write or paste your code. Tag it appropriately. Then share with your teammates, co-workers and friends.</p>
+			<a href="javascript:void(0)" id="read-more-seo">read more</a>
+			<div id="seo-text-more" class="clearfix">
+				<p>You don't need an account to post on snippify.me, you just login with your OpenID username.</p>
+				<p>Snippify is extended as:</p>
+				<ul>
+					<li><a href="/plugins/eclipse">Snippify Eclipse plugin</a></li>
+					<li><a href="/plugins/netbeans">Snippify Netbeans plugin</a></li>
+					<li><a href="/plugins/komodo">Snippify Komodo extension</a></li>
+					<li><a href="/plugins/firefox">Snippify Firefox extension</a></li>
+				</ul>
+				<p>We're open to new features, so please drop us a line if you have an idea to enhance the Snippify experience!</p>
+				<p>Thank you, <br />The Snippify team</p>
+			</div>
+		</div>
+	{% endif %}
+
+	<div id="header" class="clearfix">
+		<div id="logo">
+			<a href="/">snippify.me</a>
+		</div>
+		<div class="menubar clearfix">
+			<ul id="primary-navigation">
+				{% if user.is_authenticated %}
+				<li><a class="first" href="/accounts/profile">{{user.username}}</a></li>
+				<li><a href="/create">Add a snippet</a></li>
+				<li><a href="/account/signout">Logout</a></li>
+				{% else %}
+					<li class="first" id="login"><a href="/account/signin">Login / Register</a></li>
+				{% endif %}
+			</ul>
+			<div id="search-form">
+				<form method="get" action="/search/">
+					<div><input type="text" name="q" id="big-search-input" /></div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<div id="main" class="{% if home_page %}intro{% endif %} clearfix">
+		{% if flash %}<div id="flash_message" class="{% if flash.1 %}{{flash.1}}{% else %}info{% endif %}">{{flash.0}}</div>{% endif %}
+		<div id="main-content">
+			{% block content %}{% endblock %}
+		</div>
+	</div>
+	<div id="footer">
+		<a class="external" title="A Django joint." href="http://www.djangoproject.com/" id="powered-by"><img alt="A Django joint." src="{{MEDIA_URL}}images/django.png"/></a>
+		<ul class="secondary-navigation">
+			<li><a href="/about/">About</a></li>
+			<li><a href="/faq/">FAQ</a></li>
+			<li><a href="/plugins/">Plugins</a></li>
+			<li><a href="/tags/">Tags</a></li>
+			<li><a href="/legal/">Legal</a></li>
+			<li><span>{% now "Y" %} Code Snippets | Snippify.me</span></li>
+		</ul>
+	</div>
+</div>
+<script type="text/javascript">
+//<!--
+	var MEDIA_URL = '{{MEDIA_URL}}';
+//-->
+</script>
+<script type="text/javascript" src="{{MEDIA_URL}}js/jquery-1.3.2.min.js"></script>{% block extra_scripts %}{% endblock %}
+<script type="text/javascript" src="{{MEDIA_URL}}js/base.js"></script>
+
+<!-- GA Code -->
+<!--
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-1170956-8");
+pageTracker._trackPageview();
+} catch(err) {}</script>
+-->
+<!-- /GA Code -->
 </body>
 </html>
