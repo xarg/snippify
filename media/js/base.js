@@ -24,9 +24,15 @@ $(document).ready(function(){
 		$('#seo-text-more').slideDown("");
 		$('#read-more-seo').slideUp("fast");
 	});
-
+	$('#one-two-three').click(function(){
+		if($(this).hasClass('logged')){
+			window.location = '/create/'
+		}else{
+			window.location = '/account/signin/'
+		}
+	})
 	setTimeout('$("#flash_message").slideUp("fast")', 5000);
-}); 
+});
 function qsearch() {
 	searchDefault = $("#big-search-input").val();
 	$("#big-search-input").focus();

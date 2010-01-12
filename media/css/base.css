@@ -72,7 +72,7 @@ ul{ list-style:none; }
 	-webkit-border-radius:0px;
 	border-radius:0px;
 	background:none;
-	padding:0px;	
+	padding:0px;
 }
 
 #primary-navigation {
@@ -95,7 +95,7 @@ ul{ list-style:none; }
 	color:#fff !important;
 	text-shadow:1px 1px #6a8c1a;
 }
-#primary-navigation li{	
+#primary-navigation li{
 	display: block;
 	float:left;
 	color: #fff;
@@ -138,7 +138,7 @@ ul{ list-style:none; }
 	border: none;
 }
 .snippet-description h3,
-.snippet-title h1{	
+.snippet-title h1{
 	padding: 5px 0 0px;
 	font-family:Arial;
 	font-weight:normal;
@@ -155,7 +155,7 @@ ul{ list-style:none; }
 	padding-top:0px;
 	padding-bottom:5px;
 }
-.snippet-title h6{	
+.snippet-title h6{
 	font-family:Arial;
 	font-weight:normal;
 	letter-spacing:0;
@@ -212,11 +212,11 @@ pre { font-family:Courier New; font-size:11px; line-height:16px; }
 .snippet-description {
 	padding-left:0px;
 }
-.code pre { 
-	overflow-x:auto; 
+.code pre {
+	overflow-x:auto;
 	overflow-y:hidden;
 	width:inherit;
-} 
+}
 .side-content {
 	padding-top:10px;
 	padding-bottom:4px;
@@ -257,7 +257,7 @@ label{
 }
 .input select, .input textarea, .input .help_text { float:left; }
 .input label, .input .help_text { line-height:30px; }
-.input .help_text { 
+.input .help_text {
 	width:384px; padding-left:10px;
 }
 textarea {
@@ -404,6 +404,7 @@ div.gravatar {
 	background:url(../images/one-two-three.png) no-repeat;
 	overflow:hidden;
 	height:40px;
+	cursor: pointer;
 }
 #one-two-three.logged {
 	background:url(../images/one-two-three-logged.png) no-repeat;
@@ -781,6 +782,24 @@ a.openid_large_btn:focus {
 .pluginslist li a img {
 	border:none;
 }
+#download-plugin {
+	padding: 50px 0 0 0;
+	height:0px;
+	width:209px;
+	overflow:hidden;
+	border:none;
+	display:block;
+	background:url(../images/download-this.png) no-repeat left top;
+}
+#download-plugin img {
+	border:none;
+}
+#download-plugin:hover {
+	background:url(../images/download-this.png) no-repeat left -50px;
+}
+.plugin-icon {
+	margin-top:-54px;
+}
 
 /**
 	End OpenID CSS
@@ -791,10 +810,10 @@ a.openid_large_btn:focus {
 */
 
 .clearfix:after {
-    content: "."; 
-    display: block; 
-    height: 0; 
-    clear: both; 
+    content: ".";
+    display: block;
+    height: 0;
+    clear: both;
     visibility: hidden;
 }
 

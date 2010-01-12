@@ -23,7 +23,7 @@ urlpatterns = patterns('',
 	(r'^/?$', 'snippify.pages.views.index'),
 
 	(r'^snippets/?$', 'snippify.snippets.views.index'),
-	(r'^(\d+)/?$', 'snippify.snippets.views.read'),
+	(r'^(\d+)-?.*/?$', 'snippify.snippets.views.read'),
 	(r'^create/?$', 'snippify.snippets.views.create'),
 	(r'^update/(\d+)/?$', 'snippify.snippets.views.update'),
 	(r'^delete/(\d+)/?$', 'snippify.snippets.views.delete'),
@@ -33,7 +33,7 @@ urlpatterns = patterns('',
 	(r'^search/?$', 'snippify.snippets.views.search'),
 
 
-	(r'^account/', include('django_authopenid.urls')),
+	(r'^account/', include('snippify.django_authopenid.urls')),
 	(r'^accounts/profile/','snippify.accounts.views.profile'),
 	(r'^accounts/edit/','snippify.accounts.views.edit'),
 	(r'^accounts/follow/(\w+)/?','snippify.accounts.views.follow'),

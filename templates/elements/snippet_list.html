@@ -1,7 +1,7 @@
 {% if snippets %}
 	{% for snippet in snippets %}
 	<div class="latest-snippets clearfix">
-		<h3><a href="/{{snippet.pk}}">{{snippet.title}}</a></h3>
+		<h3><a href="/{{snippet.pk}}-{{snippet.title|slugify}}">{{snippet.title}}</a></h3>
 		<p>{{snippet.description|truncatewords:16}}&nbsp;</p>
 		<p class="snippet-meta">Added by <a href="/accounts/{{snippet.author}}">{{snippet.author}}</a> {{snippet.created_date|timesince}} ago</p>
 	</div>

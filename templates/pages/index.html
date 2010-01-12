@@ -1,14 +1,14 @@
 {% extends "base.html" %}
 {% load tagging_tags %}
-{% block title%}Welcome{% endblock%}
+{% block title%}{% endblock%}
 {% block extra_scripts %}
 <script type="text/javascript" src="{{MEDIA_URL}}js/swfobject.js"></script>
 <script type="text/javascript">
-	{% tag_cloud_for_model snippets.snippet as cloud with steps=2 min_count=1 distribution=log %}	
+	{% tag_cloud_for_model snippets.snippet as cloud with steps=2 min_count=1 distribution=log %}
 	tagcloud = "%3Ctags%3E"
 	{% for tag in cloud %}
 	tagcloud +='%3Ca href="http://snippify.me:8000/tag/{{tag}}" class="tag-item" style="font-size: {{tag.font_size|add:"10"}}em"%3E{{tag}}%3C%2Fa%3E'
-	{% endfor %}	
+	{% endfor %}
 	tagcloud +="%3C%2Ftags%3E"
 	params = {
 		"wmode": "transparent",
@@ -43,7 +43,7 @@
 {% else %}
 <div id="one-two-three" class="clearfix">
 <a href="/account/signin/">To post your snippets you need to authenticate using OpenID.</a>
-{% endif %}			
+{% endif %}
 Write. Simply write or paste your snippet. <br />
 Tag. Tag appropriately your new snippet<br />
 Share. Share the snippet with your teammates!
@@ -81,33 +81,6 @@ Share. Share the snippet with your teammates!
 				<div id="flashcloud"></div>
 			</div>
 		</div>
-		<!--<div class="boxed clearfix">-->
-		<!--	<h2>Most active users</h2>-->
-		<!--	<div class="active-users clearfix">-->
-		<!--		<div class="active-user-icon">-->
-		<!--			<a title="humancoder" href="/accounts/humancoder"><img width="48" height="48" border="0" class="gravatar" alt="gravatar" src="http://www.gravatar.com/avatar.php?size=48&amp;gravatar_id=7c906e5d2a26a7337fb76472cd9df02f"/></a>-->
-		<!--		</div>-->
-		<!--		<h4><a href="#">USERNAME</a></h4>-->
-		<!--		<h4>302 snippets</h4>-->
-		<!--		<p>From: LOCATION</p>-->
-		<!--	</div>-->
-		<!--	<div class="active-users clearfix">-->
-		<!--		<div class="active-user-icon">-->
-		<!--			<a title="humancoder" href="/accounts/humancoder"><img width="48" height="48" border="0" class="gravatar" alt="gravatar" src="http://www.gravatar.com/avatar.php?size=48&amp;gravatar_id=7c906e5d2a26a7337fb76472cd9df02f"/></a>-->
-		<!--		</div>-->
-		<!--		<h4><a href="#">USERNAME</a></h4>-->
-		<!--		<h4>302 snippets</h4>-->
-		<!--		<p>From: LOCATION</p>-->
-		<!--	</div>-->
-		<!--	<div class="active-users clearfix">-->
-		<!--		<div class="active-user-icon">-->
-		<!--			<a title="humancoder" href="/accounts/humancoder"><img width="48" height="48" border="0" class="gravatar" alt="gravatar" src="http://www.gravatar.com/avatar.php?size=48&amp;gravatar_id=7c906e5d2a26a7337fb76472cd9df02f"/></a>-->
-		<!--		</div>-->
-		<!--		<h4><a href="#">USERNAME</a></h4>-->
-		<!--		<h4>302 snippets</h4>-->
-		<!--		<p>From: LOCATION</p>-->
-		<!--	</div>-->
-		<!--</div>-->
 	</div>
 </div>
 {% endblock %}

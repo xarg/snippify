@@ -19,7 +19,7 @@
 	<div class="followed-list">
 		<h2>Following {{followed_users.count}} users</h2>
 		<div class="followed-users clearfix">
-		{% for follower in followed_users %}		
+		{% for follower in followed_users %}
 			<div class="followed-user"><a href="/accounts/{{follower.followed_user.username}}" title="{{follower.followed_user.username}}">{% gravatar follower.followed_user.email 24 %}</a></div>
 		{% endfor %}
 		</div>
@@ -28,9 +28,9 @@
 	{% endif %}
 	{% if followers %}
 	<div class="followed-list">
-		<h2>{{followers.count}} followers</h2>		
+		<h2>{{followers.count}} followers</h2>
 		<div class="followers-users clearfix">
-		{% for follower in followers %}		
+		{% for follower in followers %}
 			<div class="followed-user"><a href="/accounts/{{follower.user.username}}" title="{{follower.user.username}}">{% gravatar follower.user.email 24 %}</a></div>
 		{% endfor %}
 		</div>

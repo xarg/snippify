@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # Copyright 2007, 2008,2009 by Benoît Chesneau <benoitc@e-engura.org>
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -32,7 +32,7 @@ from django.contrib.sites.models import Site
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from django_authopenid.signals import oid_associate
+from snippify.django_authopenid.signals import oid_associate
 
 __all__ = ['Nonce', 'Association', 'UserAssociation']
 
@@ -41,7 +41,7 @@ class Nonce(models.Model):
     server_url = models.CharField(max_length=255)
     timestamp = models.IntegerField()
     salt = models.CharField(max_length=40)
-    
+
     def __unicode__(self):
         return u"Nonce: %s" % self.id
 
@@ -53,21 +53,21 @@ class Association(models.Model):
     issued = models.IntegerField()
     lifetime = models.IntegerField()
     assoc_type = models.TextField(max_length=64)
-    
+
     def __unicode__(self):
         return u"Association: %s, %s" % (self.server_url, self.handle)
 
 class UserAssociation(models.Model):
-    """ 
-    model to manage association between openid and user 
+    """
+    model to manage association between openid and user
     """
     openid_url = models.CharField(primary_key=True, blank=False,
                             max_length=255, verbose_name=_('OpenID URL'))
     user = models.ForeignKey(User, verbose_name=_('User'))
-    
+
     def __unicode__(self):
         return "Openid %s with user %s" % (self.openid_url, self.user)
-        
+
     def save(self, send_email=True):
         super(UserAssociation, self).save()
         if send_email:
@@ -82,51 +82,51 @@ class UserAssociation(models.Model):
                                          'openid': self.openid_url
                                         })
 
-            send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, 
+            send_mail(subject, message, settings.DEFAULT_FROM_EMAIL,
                     [self.user.email], fail_silently=True)
         oid_associate.send(sender=self, user=self.user, openid=self.openid_url)
-        
+
 
     class Meta:
         verbose_name = _('user association')
         verbose_name_plural = _('user associations')
 
-class UserProfile(models.Model):	
+class UserProfile(models.Model):
 	user = models.ForeignKey(User, unique=True)
-		
+
 	location = models.CharField(max_length=50)
-	url = models.CharField(max_length=200)	
+	url = models.CharField(max_length=200)
 	about = models.CharField(max_length=500)
 	"""
 	Private key for REST API
 	"""
 	restkey = models.CharField(max_length=40)
-	""" E-mail notifications """	
+	""" E-mail notifications """
 	user_follows_you = models.BooleanField(default=True, help_text='A user started following you')
 	followed_user_created = models.BooleanField(default=True, help_text='A user that you follow submited a snippet')
 	user_commented = models.BooleanField(default=True, help_text='A user has commented on your snippet')
 	user_shared = models.BooleanField(default=True, help_text='A user shared with you a snippet')
 	my_snippet_changed = models.BooleanField(default=True, help_text='Your snippet was changed by someone else than you')
-	
+
 	""" Privacy settings """
 	profile_privacy = models.CharField(
-		max_length = 50, 
-		default = 'public', 
+		max_length = 50,
+		default = 'public',
 		choices = (
 			('public', 'Public'),
 			('private', 'Private')
 		)
 	)
 	snippet_privacy = models.CharField(
-		max_length = 50, 
-		default = 'public', 
+		max_length = 50,
+		default = 'public',
 		choices = (
 			('public', 'Public'),
 			('private', 'Private')
 		)
 	)
 	newsletter = models.BooleanField(default=True)
-	
+
 class UserFollow(models.Model):
 	""" A user can follow a User or Tag """
 	user = models.ForeignKey(User, related_name='stalkers')
