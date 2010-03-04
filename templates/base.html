@@ -34,7 +34,7 @@
 			</div>
 		</div>
 	{% endif %}
-	<div id="main" class="{% if home_page %}intro{% endif %} clearfix">
+	<div id="main" class="{% if home_page %}intro {% endif %}{% if sidebared %}sidebared {% endif %}clearfix">
 		{% if flash %}<div id="flash_message" class="{% if flash.1 %}{{flash.1}}{% else %}info{% endif %}">{{flash.0}}</div>{% endif %}
 		<div id="main-content">
 			{% block content %}{% endblock %}
@@ -80,9 +80,23 @@
 </script>
 <script type="text/javascript" src="{{MEDIA_URL}}js/jquery-1.3.2.min.js"></script>{% block extra_scripts %}{% endblock %}
 <script type="text/javascript" src="{{MEDIA_URL}}js/base.js"></script>
-
+<!-- getsatisfaction-->
+<script type="text/javascript" charset="utf-8">
+  var is_ssl = ("https:" == document.location.protocol);
+  var asset_host = is_ssl ? "https://s3.amazonaws.com/getsatisfaction.com/" : "http://s3.amazonaws.com/getsatisfaction.com/";
+  document.write(unescape("%3Cscript src='" + asset_host + "javascripts/feedback-v2.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript" charset="utf-8">
+  var feedback_widget_options = {};
+  feedback_widget_options.display = "overlay";  
+  feedback_widget_options.company = "snippify";
+  feedback_widget_options.placement = "left";
+  feedback_widget_options.color = "#7EB3D9";
+  feedback_widget_options.style = "problem";
+  var feedback_widget = new GSFN.feedback_widget(feedback_widget_options);
+</script>
+<!-- getsatisfaction-->
 <!-- GA Code -->
-<!--
 <script type="text/javascript">
 var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
 document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
@@ -92,7 +106,6 @@ try {
 var pageTracker = _gat._getTracker("UA-1170956-8");
 pageTracker._trackPageview();
 } catch(err) {}</script>
--->
 <!-- /GA Code -->
 </body>
 </html>

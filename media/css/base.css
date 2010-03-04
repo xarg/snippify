@@ -659,6 +659,7 @@ dd {
 	cursor:pointer;
 	cursor:hand;
 	text-align:center;
+	z-index: 999;
 }
 .followed-list-link,
 .followers-list-link {

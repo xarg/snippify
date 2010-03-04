@@ -7,7 +7,7 @@
 	{% tag_cloud_for_model snippets.snippet as cloud with steps=2 min_count=1 distribution=log %}
 	tagcloud = "%3Ctags%3E"
 	{% for tag in cloud %}
-	tagcloud +='%3Ca href="http://snippify.me:8000/tag/{{tag}}" class="tag-item" style="font-size: {{tag.font_size|add:"10"}}em"%3E{{tag}}%3C%2Fa%3E'
+	tagcloud +='%3Ca href="http://snippify.me/tag/{{tag}}" class="tag-item" style="font-size: {{tag.font_size|add:"10"}}em"%3E{{tag}}%3C%2Fa%3E'
 	{% endfor %}
 	tagcloud +="%3C%2Ftags%3E"
 	params = {
