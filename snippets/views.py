@@ -184,6 +184,7 @@ def create(request):
 			else:#save - notify followers this user and have the option on
 				formData.body = str(formData.body).replace("\r\n","\n")
 				formData.save()
+				formData.indexer.update()
 				try:
 					followers = UserFollow.objects.select_related().filter(followed_user=request.user).all()
 				except:

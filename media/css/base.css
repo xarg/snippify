@@ -11,10 +11,6 @@ ul{ list-style:none; }
  * Fonts
 */
 
-@font-face {
-	font-family: "myriad2"; src: url("myriadh2.otf")
-}
-
 /**
  * Layout
 */
@@ -47,7 +43,7 @@ ul{ list-style:none; }
 	color:#5d98d0;
 	cursor:default;
 	height:100%;
-	font-family:myriad2,Helvetica,Arial;
+	font-family:Arial,Helvetica;
 	font-size:32px;
 	line-height:34px;
 	margin-bottom:20px;
@@ -73,6 +69,9 @@ ul{ list-style:none; }
 	border-radius:0px;
 	background:none;
 	padding:0px;
+}
+#main.sidebarred {
+	background:url(../images/sidebarred.png) repeat-y right top #fff;
 }
 
 #primary-navigation {

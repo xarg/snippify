@@ -66,6 +66,7 @@ def profile(request):
 			'snippets': snippets,
 			'followed_users': followed_users,
 			'followers': followers,
+			'sidebared': True,
 		},
 		context_instance=build_context(request)
 	)
@@ -194,7 +195,8 @@ def user(request, username=None):
 			'snippets': snippets,
 			'followed_users': followed_users,
 			'followers': followers,
-			'is_following': is_following
+			'is_following': is_following,
+			'sidebared': True,
 		},
 		context_instance=build_context(request)
 	)

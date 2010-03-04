@@ -1,4 +1,4 @@
-*.pyc
 djapian_spaces/*
 django.wsgi
 settings.py
+*.pyc

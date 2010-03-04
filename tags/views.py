@@ -18,15 +18,13 @@ def view(request, tag = None):
 	try:
 		tag_object = Tag.objects.get(name=tag)
 		snippets = TaggedItem.objects.get_by_model(Snippet, tag_object)
-		debug(snippets)
-	except ObjectDoesNotExist:
-		pass
+	except:
+		snippets = None
 	return render_to_response('tags/view.html', {'tag': tag, 'snippets': snippets}, context_instance=build_context(request))
 def user(request, tag = None, username = None):
 	try:
 		tag_object = Tag.objects.get(name=tag)
 		snippets = TaggedItem.objects.get_by_model(Snippet, tag_object)
-		debug(snippets)
-	except ObjectDoesNotExist:
-		pass
+	except:
+		snippets = None
 	return render_to_response('tags/view.html', {'tag': tag, 'snippets': snippets}, context_instance=build_context(request))

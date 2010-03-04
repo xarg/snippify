@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # Copyright 2007, 2008,2009 by Benoît Chesneau <benoitc@e-engura.org>
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -25,15 +25,15 @@ try:
     from openid.yadis import xri
 except ImportError:
     from yadis import xri
-    
+
 from django_authopenid.models import UserAssociation
 
-    
+
 class OpenidSigninForm(forms.Form):
     """ signin form """
-    openid_url = forms.CharField(max_length=255, 
+    openid_url = forms.CharField(max_length=255,
             widget=forms.widgets.TextInput(attrs={'class': 'required openid'}))
-            
+
     def clean_openid_url(self):
         """ test if openid is accepted """
         if 'openid_url' in self.cleaned_data:
@@ -49,21 +49,21 @@ username_re = re.compile(r'^\w+$')
 
 class OpenidRegisterForm(forms.Form):
     """ openid signin form """
-    username = forms.CharField(max_length=30, 
+    username = forms.CharField(max_length=30,
             widget=forms.widgets.TextInput(attrs=attrs_dict))
     email = forms.EmailField(widget=forms.TextInput(attrs=dict(attrs_dict,
-        maxlength=200)), label=u'Email address')    
-    url = forms.URLField(max_length=200, 
+        maxlength=200)), label=u'Email address')
+    url = forms.URLField(max_length=200, required = False,
             widget=forms.widgets.TextInput(attrs=attrs_dict))
-    location = forms.CharField(max_length=50, 
+    location = forms.CharField(max_length=50, required = False,
             widget=forms.widgets.TextInput(attrs=attrs_dict), help_text=u'Ex. Moscow, RU')
-    about = forms.CharField(max_length=500, 
+    about = forms.CharField(max_length=500, required = False,
             widget=forms.widgets.Textarea(attrs=attrs_dict))
-        
+
     def __init__(self, *args, **kwargs):
         super(OpenidRegisterForm, self).__init__(*args, **kwargs)
         self.user = None
-    
+
     def clean_username(self):
         """ test if username is valid and exist in database """
         if 'username' in self.cleaned_data:
@@ -97,16 +97,16 @@ class OpenidRegisterForm(forms.Form):
 			raise forms.ValidationError(_("This email is already \
 				registered in our database. Please choose another."))
 
-                
+
 class AssociateOpenID(forms.Form):
     """ new openid association form """
-    openid_url = forms.CharField(max_length=255, 
+    openid_url = forms.CharField(max_length=255,
             widget=forms.widgets.TextInput(attrs={'class': 'required openid'}))
 
     def __init__(self, user, *args, **kwargs):
         super(AssociateOpenID, self).__init__(*args, **kwargs)
         self.user = user
-            
+
     def clean_openid_url(self):
         """ test if openid is accepted """
         if 'openid_url' in self.cleaned_data:
@@ -119,13 +119,13 @@ class AssociateOpenID(forms.Form):
                 rel = UserAssociation.objects.get(openid_url__exact=openid_url)
             except UserAssociation.DoesNotExist:
                 return self.cleaned_data['openid_url']
-            
+
             if rel.user != self.user:
                 raise forms.ValidationError(_("This openid is already \
                     registered in our database by another account. Please choose another."))
-                    
+
             raise forms.ValidationError(_("You already associated this openid to your account."))
-            
+
 class OpenidDissociateForm(OpenidSigninForm):
     """ form used to dissociate an openid. """
     openid_url = forms.CharField(max_length=255, widget=forms.widgets.HiddenInput())
