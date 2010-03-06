@@ -185,7 +185,6 @@ def create(request):
 			else:#save - notify followers this user and have the option on
 				formData.body = str(formData.body).replace("\r\n","\n")
 				formData.save()
-				formData.indexer.update()
 				try:
 					followers = UserFollow.objects.select_related().filter(followed_user=request.user).all()
 				except:
@@ -257,12 +256,15 @@ def search(request):
 	return render_to_response('snippets/search.html', data, context_instance=build_context(request))
 
 def suggest(request):
-	data = {}
-	data['query'] = request.GET.get('q', '')
-	results = Snippet.indexer.search(data['query']).prefetch()
-	import pdb; pdb.set_trace()
-	return results
-
+	data = []
+	query = request.GET.get('q', '')
+	results = Snippet.indexer.search(query).prefetch()
+	data.append(query)
+	results_list = []
+	for result in results:
+		results_list.append(result.instance.title)
+	data.append(results_list)
+	return HttpResponse(json.dumps(data))
 def download(request, id=None):
 	snippet = get_object_or_404(Snippet, pk=id)
 	try:
