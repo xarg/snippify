@@ -1,4 +1,5 @@
 from django.conf.urls.defaults import *
+from snippify.settings import URL
 from snippify.feeds import LatestSnippets, LatestTag, LatestUser
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -30,7 +31,9 @@ urlpatterns = patterns('',
 	(r'^download/(\d+)/?$', 'snippify.snippets.views.download'),
 	(r'^history/(\d+)/?$', 'snippify.snippets.views.history'),
 	(r'^comment/(\d+)/?$', 'snippify.snippets.views.comment'),
+	(r'^search-plugin.xml$', 'django.views.generic.simple.direct_to_template', {'template': 'snippets/search-plugin.xml', 'extra_context': {'SITE': URL}}),
 	(r'^search/?$', 'snippify.snippets.views.search'),
+	(r'^suggest/?$', 'snippify.snippets.views.suggest'),
 
 
 	(r'^account/', include('snippify.django_authopenid.urls')),

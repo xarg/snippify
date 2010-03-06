@@ -23,6 +23,7 @@ from pygments.util import ClassNotFound
 #Other
 from logging import debug
 import difflib
+import json
 
 @login_required
 def index(request):
@@ -250,10 +251,17 @@ def comment(request, id = None):
 		return JsonResponse(data)
 def search(request):
 	data = {}
-	data['query'] = request.GET['q']
+	data['query'] = request.GET.get('q', '')
 	paginator = Paginator(Snippet.indexer.search(data['query']).prefetch(), 25)
 	data['results'] = paginator.page(int(request.GET.get('page', 1)))
 	return render_to_response('snippets/search.html', data, context_instance=build_context(request))
+
+def suggest(request):
+	data = {}
+	data['query'] = request.GET.get('q', '')
+	results = Snippet.indexer.search(data['query']).prefetch()
+	import pdb; pdb.set_trace()
+	return results
 
 def download(request, id=None):
 	snippet = get_object_or_404(Snippet, pk=id)

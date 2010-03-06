@@ -245,6 +245,7 @@ def followers(request, username = None):
 	""" Who are your followers Jesus? """
 	data = {}
 	data['userdata'] = get_object_or_404(User, username=username)
+	data['attribute'] = 'user'
 	try:
 		data['users'] = UserFollow.objects.select_related().filter(followed_user=data['userdata']).all()
 	except:
@@ -254,6 +255,7 @@ def following(request, username= None):
 	""" Who is following username """
 	data = {}
 	data['userdata'] = get_object_or_404(User, username=username)
+	data['attribute'] = 'followed_user'
 	try:
 		data['users'] = UserFollow.objects.select_related().filter(user=data['userdata']).all()
 	except:
