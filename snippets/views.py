@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.core.paginator import Paginator
+from django.core.paginator import Paginator, EmptyPage
 from django.core.urlresolvers import reverse
 
 from django.contrib.auth.decorators import login_required # User to verify if user is authenticated
@@ -47,7 +47,10 @@ def read(request, id=None):
 	else:
 		versions = False
 	comments_paginator = Paginator(SnippetComment.objects.filter(snippet=snippet).all(), 2)
-	comments = comments_paginator.page(int(request.GET.get('page', 1)))
+	try:
+		comments = comments_paginator.page(int(request.GET.get('page', 1)))
+	except EmptyPage:
+		comments  = None
 
 	snippet.highlight_body = snippet.highlight(snippet.body, get_lexer_by_name(snippet.lexer))
 	return render_to_response(
