@@ -83,19 +83,19 @@ class OpenidRegisterForm(forms.Form):
             self.user = user
             raise forms.ValidationError(_("This username is already \
                 taken. Please choose another."))
-	def clean_email(self):
-		"""For security reason one unique email in database"""
-		if 'email' in self.cleaned_data:
-			try:
-				user = User.objects.get(email = self.cleaned_data['email'])
-			except User.DoesNotExist:
-				return self.cleaned_data['email']
-			except User.MultipleObjectsReturned:
-				raise forms.ValidationError(u'There is already more than one \
-					account registered with that e-mail address. Please try \
-					another.')
-			raise forms.ValidationError(_("This email is already \
-				registered in our database. Please choose another."))
+    def clean_email(self):
+        """For security reason one unique email in database"""
+        if 'email' in self.cleaned_data:
+            try:
+                user = User.objects.get(email = self.cleaned_data['email'])
+            except User.DoesNotExist:
+                return self.cleaned_data['email']
+            except User.MultipleObjectsReturned:
+                raise forms.ValidationError(u'There is already more than one \
+                    account registered with that e-mail address. Please try \
+                    another.')
+            raise forms.ValidationError(_("This email is already \
+                registered in our database. Please choose another."))
 
 
 class AssociateOpenID(forms.Form):

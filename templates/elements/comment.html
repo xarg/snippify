@@ -1,17 +1,17 @@
 <div class="comment-item" id="comment-item-{{comment.pk}}">
-	<div class="comment-author">
-		<a href="/accounts/{{comment.user.username}}" class="gravatar">{% gravatar comment.user.email %}</a>
-		<a href="/accounts/{{comment.user.username}}">{{comment.user.username}}</a>
-		wrote {{comment.created_date|timesince}} ago:
-	</div>
-	{% if user.is_staff %}
-	<div class="comment-tools">
-		<a href="/comment/{{comment.pk}}?delete=1">Delete comment</a>
-	</div>
-	{% endif %}
-	<div class="comment-content">
-		{% autoescape off %}
-		{{comment.body|striptags|snippify|urlize|linebreaks}}
-		{% endautoescape %}
-	</div>
+    <div class="comment-author">
+        <a href="/accounts/{{comment.user.username}}" class="gravatar">{% gravatar comment.user.email %}</a>
+        <a href="/accounts/{{comment.user.username}}">{{comment.user.username}}</a>
+        wrote {{comment.created_date|timesince}} ago:
+    </div>
+    {% if user.is_staff %}
+    <div class="comment-tools">
+        <a href="/comment/{{comment.pk}}?delete=1">Delete comment</a>
+    </div>
+    {% endif %}
+    <div class="comment-content">
+        {% autoescape off %}
+        {{comment.body|striptags|snippify|urlize|linebreaks}}
+        {% endautoescape %}
+    </div>
 </div>

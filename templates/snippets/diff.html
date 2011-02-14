@@ -7,22 +7,22 @@
 <h2 style="margin-top:-20px;">from <strong>{% if version1 == 0 %}current version{% else %}version {{version1}}{% endif %}</strong> to <strong>{% if version2 == 0 %}current version {% else %}version {{version2}}{% endif %}</strong></h2><br />
 <div class="snippet">
 {% if version1 == version2  %}
-	<h2>You need to choose two different versions to be able to compare them</h2>
-	<br /><a class="edit-link" href="/history/{{snippet.pk}}">try again</a>
+    <h2>You need to choose two different versions to be able to compare them</h2>
+    <br /><a class="edit-link" href="/history/{{snippet.pk}}">try again</a>
 {% else %}
-	<div class="snippet-code highlight">
-		<table>
-			<tbody>
-				<tr>
-					<td class="linenos" valign="top">
-					<pre>{% for lineno in lines %}
+    <div class="snippet-code highlight">
+        <table>
+            <tbody>
+                <tr>
+                    <td class="linenos" valign="top">
+                    <pre>{% for lineno in lines %}
 {{lineno}}{% empty %}&nbsp;{% endfor%}</pre></td>
-					<td class="code" valign="top">{% autoescape off %}{{diffbody}}{% endautoescape %}</td>
-				</tr>
-			</tbody>
-		</table>
+                    <td class="code" valign="top">{% autoescape off %}{{diffbody}}{% endautoescape %}</td>
+                </tr>
+            </tbody>
+        </table>
     </div>
-	<br /><a class="edit-link" href="/history/{{snippet.pk}}">compare other versions</a>
+    <br /><a class="edit-link" href="/history/{{snippet.pk}}">compare other versions</a>
 {% endif %}
 </div>
 {% endblock %}

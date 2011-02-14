@@ -4,21 +4,21 @@
 {% block content %}
 <div id="completetxt">
 <h1>Great, now fill up the fields below.</h1>
-</div>	
+</div>    
 <div class="login">
        <form name="fregister" action="{% url user_register %}" method="post">{% csrf_token %}
            <input type="hidden" name="next" value="{{ next }}" />
-		{% for field in form1 %}
-		   <div class="input clearfix">				
-	            {{ field.label_tag }}            					
-	            {{ field }}
-	            {{ field.errors }}            					
-	            {% if field.help_text %}<p class="help_text">{{ field.help_text }}</p>{% endif %}
-        	</div>
-    	{% endfor %}
-		<div class="submit">
-			<input class="submit-button save" type="submit" name="submit" value="Submit"/>
-		</div>
-	</form>
+        {% for field in form1 %}
+           <div class="input clearfix">                
+                {{ field.label_tag }}                                
+                {{ field }}
+                {{ field.errors }}                                
+                {% if field.help_text %}<p class="help_text">{{ field.help_text }}</p>{% endif %}
+            </div>
+        {% endfor %}
+        <div class="submit">
+            <input class="submit-button save" type="submit" name="submit" value="Submit"/>
+        </div>
+    </form>
 </div>
 {% endblock %}

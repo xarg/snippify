@@ -5,17 +5,17 @@
 <h1>Sign In Using Your OpenID URL</h1>
 <h3>Please click your account provider:</h3><br />
 <form id="openid_form" class="clearfix" name="openid_form" action="{% url user_signin %}" method="post">{% csrf_token %}
-	<div>
-		<input type="hidden" name="action" value="verify" />
-		<input type="hidden" name="next" value="{{ next }}" />
-		<div id="openid_choice">
-			<div id="openid_btns"></div>
-		</div>
-		<div id="openid_input_area">
-			<label for="id_openid_url">{% trans "OpenId URL :" %}</label>{{ form1.openid_url }}
-			<input name="openid_submit" type="submit" value="{% trans "Sign in with OpenID" %}" />
-		</div>
-	</div>
+    <div>
+        <input type="hidden" name="action" value="verify" />
+        <input type="hidden" name="next" value="{{ next }}" />
+        <div id="openid_choice">
+            <div id="openid_btns"></div>
+        </div>
+        <div id="openid_input_area">
+            <label for="id_openid_url">{% trans "OpenId URL :" %}</label>{{ form1.openid_url }}
+            <input name="openid_submit" type="submit" value="{% trans "Sign in with OpenID" %}" />
+        </div>
+    </div>
 </form>
 <p>Before proceeding, please check the <a href="/legal/">Terms of service</a></p>
 {% endblock %}

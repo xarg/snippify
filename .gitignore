@@ -1,5 +1,2 @@
-djapian_spaces/*
-django.wsgi
-settings.py
-.htaccess
+local_settings.py
 *.pyc

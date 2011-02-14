@@ -81,7 +81,7 @@ var providers = $.extend({}, providers_large, providers_small);
 
 var openid = {
 
-  cookie_expires: 6*30,	// 6 months.
+  cookie_expires: 6*30,    // 6 months.
   cookie_name: 'openid_provider',
   cookie_path: '/',
 
@@ -162,7 +162,7 @@ var openid = {
       this.setOpenIdUrl(provider['url']);
       if (! onload) {
         $('#openid_form').submit();
-      }	
+      }    
     }
   },
   /* Sign-in button click */

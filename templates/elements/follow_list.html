@@ -1,17 +1,17 @@
 <div class="user-list">
 {% for user in users %}
-	{% if attribute == 'user' %}
-	<div class="user-item clearfix">
-		<p class="gravatar"><a href="/accounts/{{user.user.username}}">{% gravatar user.user.email %}</a></p>
-		<p class="username"><a href="/accounts/{{user.user.username}}">{{user.user.username}}</a> from {{user.user.get_profile.location}}</p>
-		<p class="description"><em>{{user.user.get_profile.about}}</em></p>
-	</div>
-	{% else %}
-	<div class="user-item clearfix">
-		<p class="gravatar"><a href="/accounts/{{user.followed_user.username}}">{% gravatar user.followed_user.email %}</a></p>
-		<p class="username"><a href="/accounts/{{user.followed_user.username}}">{{user.followed_user.username}}</a> from {{user.followed_user.get_profile.location}}</p>
-		<p class="description"><em>{{user.followed_user.get_profile.about}}</em></p>
-	</div>
-	{% endif %}
+    {% if attribute == 'user' %}
+    <div class="user-item clearfix">
+        <p class="gravatar"><a href="/accounts/{{user.user.username}}">{% gravatar user.user.email %}</a></p>
+        <p class="username"><a href="/accounts/{{user.user.username}}">{{user.user.username}}</a> from {{user.user.get_profile.location}}</p>
+        <p class="description"><em>{{user.user.get_profile.about}}</em></p>
+    </div>
+    {% else %}
+    <div class="user-item clearfix">
+        <p class="gravatar"><a href="/accounts/{{user.followed_user.username}}">{% gravatar user.followed_user.email %}</a></p>
+        <p class="username"><a href="/accounts/{{user.followed_user.username}}">{{user.followed_user.username}}</a> from {{user.followed_user.get_profile.location}}</p>
+        <p class="description"><em>{{user.followed_user.get_profile.about}}</em></p>
+    </div>
+    {% endif %}
 {% endfor %}
 </div>

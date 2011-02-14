@@ -4,31 +4,31 @@
 <h1><a href="/{{snippet.pk}}">{{snippet.title}}</a> history</h1>
 {% if snippet_versions %}
 <form method="get" action="">
-	<div class="version-list">
-		<div class="versions-header clearfix">
-			<div class="select-version-1">&nbsp;</div>
-			<div class="select-version-2">&nbsp;</div>
-			<div class="version">Version</div>
-			<div class="date-updated">Created on</div>
-		</div>
-		<div class="head-version clearfix">
-			<div class="select-version-1"><input type="radio" name="v1" value="0" /></div>
-			<div class="select-version-2"><input type="radio" name="v2" value="0" /></div>
-			<div class="version"><a href="/{{snippet.pk}}">current version</a></div>
-			<div class="date-updated">{{snippet.created_date}}</div>
-		</div>
-		{% for version in snippet_versions %}
-		<div class="snippet-version clearfix">
-			<div class="select-version-1"><input type="radio" name="v1" value="{{version.version}}" /></div>
-			<div class="select-version-2"><input type="radio" name="v2" value="{{version.version}}" /></div>
-			<div class="version">version {{version.version}} - <a href="/history/{{snippet.pk}}?v={{version.version}}">view</a></div>
-			<div class="date-updated">{{version.created_date}}</div>
-		</div>
-		{% endfor%}
-	</div>
-	<div class="submit">
-		<br /><input class="submit-button diff" type="submit" value="Diff"/>
-	</div>
+    <div class="version-list">
+        <div class="versions-header clearfix">
+            <div class="select-version-1">&nbsp;</div>
+            <div class="select-version-2">&nbsp;</div>
+            <div class="version">Version</div>
+            <div class="date-updated">Created on</div>
+        </div>
+        <div class="head-version clearfix">
+            <div class="select-version-1"><input type="radio" name="v1" value="0" /></div>
+            <div class="select-version-2"><input type="radio" name="v2" value="0" /></div>
+            <div class="version"><a href="/{{snippet.pk}}">current version</a></div>
+            <div class="date-updated">{{snippet.created_date}}</div>
+        </div>
+        {% for version in snippet_versions %}
+        <div class="snippet-version clearfix">
+            <div class="select-version-1"><input type="radio" name="v1" value="{{version.version}}" /></div>
+            <div class="select-version-2"><input type="radio" name="v2" value="{{version.version}}" /></div>
+            <div class="version">version {{version.version}} - <a href="/history/{{snippet.pk}}?v={{version.version}}">view</a></div>
+            <div class="date-updated">{{version.created_date}}</div>
+        </div>
+        {% endfor%}
+    </div>
+    <div class="submit">
+        <br /><input class="submit-button diff" type="submit" value="Diff"/>
+    </div>
 </form>
 {% else %}
 <div class="no-records">There is no history.</div>

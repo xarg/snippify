@@ -1,20 +1,20 @@
 var previewed = false;
 var commentBusy = false;
 $(document).ready(function() {
-	$('.preview-comment').click(function(e){
-		e.preventDefault();
-		$('.comment-preview').fadeIn();
-		$('.comment-preview .content').text($('#id_comment').val());
-	})
+    $('.preview-comment').click(function(e){
+        e.preventDefault();
+        $('.comment-preview').fadeIn();
+        $('.comment-preview .content').text($('#id_comment').val());
+    })
     $('.comment-form form').submit(function(e) {
-    	e.preventDefault();
+        e.preventDefault();
         ajaxComment();
     });
 });
 
 function ajaxComment() {
     $('div.comment-error').text('');
-	$('.comment-preview').hide();
+    $('.comment-preview').hide();
     if (commentBusy) {
         $('div.comment-form form').before('\
             <div class="comment-error">\
@@ -39,7 +39,7 @@ function ajaxComment() {
         success: function(data) {
             removeWaitAnimation()
             if (data.error) {
-				commentFailure(data.error);
+                commentFailure(data.error);
             } else {
                 commentSuccess(data.content);
             }
@@ -53,12 +53,12 @@ function ajaxComment() {
     return false;
 }
 function commentSuccess(content) {
-	if ($('#snippet-comments .comment-list').children().length == 0) {
-		$('div#comments').prepend('<h2 class="comment-hd">1 comment so far:</h2>')
-	}
-	$('#id_comment').val('');
-	$('#snippet-comments .comment-list').append(content);
-	$('div.comment-item:last').show('slow');
+    if ($('#snippet-comments .comment-list').children().length == 0) {
+        $('div#comments').prepend('<h2 class="comment-hd">1 comment so far:</h2>')
+    }
+    $('#id_comment').val('');
+    $('#snippet-comments .comment-list').append(content);
+    $('div.comment-item:last').show('slow');
 }
 function commentFailure(error) {
     $('.comment-error').text(error);

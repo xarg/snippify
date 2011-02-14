@@ -1,8 +1,8 @@
 /* ------------------------------------------------------------------------
- * 	Class: prettyPhoto
- * 	Use: Lightbox clone for jQuery
- * 	Author: Stephane Caron (http://www.no-margin-for-errors.com)
- * 	Version: 2.5.6
+ *     Class: prettyPhoto
+ *     Use: Lightbox clone for jQuery
+ *     Author: Stephane Caron (http://www.no-margin-for-errors.com)
+ *     Version: 2.5.6
  ------------------------------------------------------------------------- */
 
 (function($){$.prettyPhoto={version:'2.5.6'};$.fn.prettyPhoto=function(settings){settings=jQuery.extend({animationSpeed:'normal',opacity:0.80,showTitle:true,allowresize:true,default_width:500,default_height:344,counter_separator_label:'/',theme:'light_rounded',hideflash:false,wmode:'opaque',autoplay:true,modal:false,changepicturecallback:function(){},callback:function(){},markup:'<div class="pp_pic_holder"> \

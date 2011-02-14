@@ -3,73 +3,73 @@
 {% block title %}{{userdata.username}}'s profile{% endblock %}
 {% block content %}
 <div id="sidebar" class="clearfix">
-	<div class="profile-details">
-		<div class="gravatar clearfix">
-			{% gravatar userdata.email %}
-			<h3>{{userdata.username}}</h3>
-			{% if is_following %}
-				<a href="/accounts/unfollow/{{userdata.username}}/">Stop following this user</a>
-			{% else %}
-				<a href="/accounts/follow/{{userdata.username}}/" title="when {{userdata.username}} will create a new snippet you will be notified via e-mail ;)">Follow this user</a>
-			{% endif %}
-		</div>
-		<p><strong class="label">Location</strong><br /> {{profile.location}}</p>
-		<p><strong class="label">URL</strong><br /> {{profile.url|urlize}}</p>
-		<p><strong class="label">About</strong><br /> {{profile.about|urlize}}</p>
-	</div>
-	{% if followed_users %}
-	<div class="followed-list">
-		<h2>Following {{followed_users.count}} users</h2>
-		<div class="followed-users clearfix">
-		{% for follower in followed_users %}
-			<div class="followed-user"><a href="/accounts/{{follower.followed_user.username}}" title="{{follower.followed_user.username}}">{% gravatar follower.followed_user.email 24 %}</a></div>
-		{% endfor %}
-		</div>
-		<a href="/accounts/following/{{userdata.username}}" class="followed-list-link">view all &raquo;</a>
-	</div>
-	{% endif %}
-	{% if followers %}
-	<div class="followed-list">
-		<h2>{{followers.count}} followers</h2>
-		<div class="followers-users clearfix">
-		{% for follower in followers %}
-			<div class="followed-user"><a href="/accounts/{{follower.user.username}}" title="{{follower.user.username}}">{% gravatar follower.user.email 24 %}</a></div>
-		{% endfor %}
-		</div>
-		<a href="/accounts/followers/{{userdata.username}}" class="followers-list-link">view all &raquo;</a>
-	</div>
-	{% endif %}
+    <div class="profile-details">
+        <div class="gravatar clearfix">
+            {% gravatar userdata.email %}
+            <h3>{{userdata.username}}</h3>
+            {% if is_following %}
+                <a href="/accounts/unfollow/{{userdata.username}}/">Stop following this user</a>
+            {% else %}
+                <a href="/accounts/follow/{{userdata.username}}/" title="when {{userdata.username}} will create a new snippet you will be notified via e-mail ;)">Follow this user</a>
+            {% endif %}
+        </div>
+        <p><strong class="label">Location</strong><br /> {{profile.location}}</p>
+        <p><strong class="label">URL</strong><br /> {{profile.url|urlize}}</p>
+        <p><strong class="label">About</strong><br /> {{profile.about|urlize}}</p>
+    </div>
+    {% if followed_users %}
+    <div class="followed-list">
+        <h2>Following {{followed_users.count}} users</h2>
+        <div class="followed-users clearfix">
+        {% for follower in followed_users %}
+            <div class="followed-user"><a href="/accounts/{{follower.followed_user.username}}" title="{{follower.followed_user.username}}">{% gravatar follower.followed_user.email 24 %}</a></div>
+        {% endfor %}
+        </div>
+        <a href="/accounts/following/{{userdata.username}}" class="followed-list-link">view all &raquo;</a>
+    </div>
+    {% endif %}
+    {% if followers %}
+    <div class="followed-list">
+        <h2>{{followers.count}} followers</h2>
+        <div class="followers-users clearfix">
+        {% for follower in followers %}
+            <div class="followed-user"><a href="/accounts/{{follower.user.username}}" title="{{follower.user.username}}">{% gravatar follower.user.email 24 %}</a></div>
+        {% endfor %}
+        </div>
+        <a href="/accounts/followers/{{userdata.username}}" class="followers-list-link">view all &raquo;</a>
+    </div>
+    {% endif %}
 </div>
 <div id="container" class="clearfix">
-	<div class="snippet-list">
-		<h1>Profile of {{userdata.username}}</h1>
-		<h2>Snippets posted by {{userdata.username}}</h2>
-		{% if snippets %}
-			{% for snippet in snippets %}
-				<div class="snippet-teaser">
-					<h3><a href="/{{snippet.pk}}-{{snippet.title|slugify}}">{{snippet.title}}</a></h3>
-					<p>{{snippet.description}}</p>
-					<p class="snippet-meta">Added on: <em>{{snippet.created_date|date:"d F Y"}}</em>
-					{% if snippet.tags %}
-					{% tags_for_object snippet as tags %}
-					and tagged with: <em>{% for tag in tags %}<a href="/tag/{{tag}}">{{tag}}</a> {% endfor %}</em>
-					{% endif %}
-					</p>
-				</div>
-			{% endfor %}
-		{% else %}
-			<p class="empty">No snippets</p>
-		{% endif %}
-	</div>
-	<div class="tag-list">
-		<h2>{{userdata.username}} tagged snippets with</h2>
-		{% if tags %}
-		{% for tag in tags %}
-			<a href="/tag/{{tag}}/{{user.username}}">{{tag}}</a>
-		{% endfor %}
-		{% else %}
-		<p class="empty">No tags</p>
-		{% endif %}
-	</div>
+    <div class="snippet-list">
+        <h1>Profile of {{userdata.username}}</h1>
+        <h2>Snippets posted by {{userdata.username}}</h2>
+        {% if snippets %}
+            {% for snippet in snippets %}
+                <div class="snippet-teaser">
+                    <h3><a href="/{{snippet.pk}}-{{snippet.title|slugify}}">{{snippet.title}}</a></h3>
+                    <p>{{snippet.description}}</p>
+                    <p class="snippet-meta">Added on: <em>{{snippet.created_date|date:"d F Y"}}</em>
+                    {% if snippet.tags %}
+                    {% tags_for_object snippet as tags %}
+                    and tagged with: <em>{% for tag in tags %}<a href="/tag/{{tag}}">{{tag}}</a> {% endfor %}</em>
+                    {% endif %}
+                    </p>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p class="empty">No snippets</p>
+        {% endif %}
+    </div>
+    <div class="tag-list">
+        <h2>{{userdata.username}} tagged snippets with</h2>
+        {% if tags %}
+        {% for tag in tags %}
+            <a href="/tag/{{tag}}/{{user.username}}">{{tag}}</a>
+        {% endfor %}
+        {% else %}
+        <p class="empty">No tags</p>
+        {% endif %}
+    </div>
 </div>
 {% endblock %}

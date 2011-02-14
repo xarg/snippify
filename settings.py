@@ -63,29 +63,29 @@ SECRET_KEY = ''
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
-	'django.template.loaders.filesystem.load_template_source',
-	'django.template.loaders.app_directories.load_template_source',
+    'django.template.loaders.filesystem.load_template_source',
+    'django.template.loaders.app_directories.load_template_source',
 #     'django.template.loaders.eggs.load_template_source',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
-	'django.core.context_processors.auth',
-	'django.core.context_processors.debug',
-	'django.core.context_processors.i18n',
-	'django.core.context_processors.media',
-	'django.core.context_processors.request',
-	'django_authopenid.context_processors.authopenid'
+    'django.core.context_processors.auth',
+    'django.core.context_processors.debug',
+    'django.core.context_processors.i18n',
+    'django.core.context_processors.media',
+    'django.core.context_processors.request',
+    'django_authopenid.context_processors.authopenid'
 )
 
 MIDDLEWARE_CLASSES = (
-	'firepy.django.middleware.FirePHPMiddleware',
-	'django.middleware.common.CommonMiddleware',
-	'django.contrib.sessions.middleware.SessionMiddleware',
-	'django.contrib.auth.middleware.AuthenticationMiddleware',
-	'django.middleware.doc.XViewMiddleware',
-	'django_authopenid.middleware.OpenIDMiddleware',
-	'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
-	'django.middleware.csrf.CsrfViewMiddleware',
+    'firepy.django.middleware.FirePHPMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.middleware.doc.XViewMiddleware',
+    'django_authopenid.middleware.OpenIDMiddleware',
+    'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
 )
 
 ROOT_URLCONF = 'snippify.urls'
@@ -98,20 +98,20 @@ TEMPLATE_DIRS = (
 )
 
 INSTALLED_APPS = (
-	'django.contrib.auth',
-	'django.contrib.contenttypes',
-	'django.contrib.sessions',
-	'django.contrib.sites',
-	'django.contrib.admin',
-	'django.contrib.syndication',
-	'globaltags',
-	'tagging',
-	'django.contrib.flatpages',
-	'django_authopenid',
-	'djapian',
-	#'piston',
-	'snippify.snippets',
-	'snippify.emails',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.sites',
+    'django.contrib.admin',
+    'django.contrib.syndication',
+    'globaltags',
+    'tagging',
+    'django.contrib.flatpages',
+    'django_authopenid',
+    'djapian',
+    #'piston',
+    'snippify.snippets',
+    'snippify.emails',
 )
 
 DJAPIAN_DATABASE_PATH = './djapian_spaces/'
