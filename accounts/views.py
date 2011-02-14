@@ -19,6 +19,25 @@ from snippify.utils import build_context
 from models import UserProfile, UserFollow
 from django_emailqueue.models import EmailQueue
 
+from django_authopenid.signals import oid_register
+
+def register_account(form, _openid):
+    """ create an account """
+    user = User.objects.create_user(form.cleaned_data['username'],
+                            form.cleaned_data['email'])
+    user.save()
+    profile = UserProfile(
+        user=user,
+        location=form.cleaned_data['location'],
+        url=form.cleaned_data['url'],
+        about=form.cleaned_data['about'],
+        restkey=hashlib.sha1(str(random.random()) + 'snippify.me' + str(time.time())).hexdigest(),
+    )
+    profile.save()
+    user.backend = "django.contrib.auth.backends.ModelBackend"
+    oid_register.send(sender=user, openid=_openid)
+    return user
+
 @login_required
 def profile(request):
     tags = []

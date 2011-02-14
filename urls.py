@@ -20,6 +20,10 @@ admin.autodiscover()
 #snippet_handler = Resource(SnippetHandler)
 
 from snippets import views as snippets_views
+from accounts.forms import OpenidRegisterForm
+from accounts import views as auth_views
+from django_authopenid import views as oid_views
+
 
 urlpatterns = patterns('',
     url(r'^/?$', snippets_views.snippets_index, name="snippets_index"),
@@ -40,16 +44,21 @@ urlpatterns = patterns('',
         {'template': 'snippets/search-plugin.xml', 'extra_context': {'SITE': ''}}),
 
 
+    url(r'^account/register/$', oid_views.register, {
+        'register_form': OpenidRegisterForm,
+        'register_account': auth_views.register_account
+        },  name='user_register'),
     url(r'^account/', include('django_authopenid.urls')),
     url(r'^accounts/', include('accounts.urls')),
 
-    #(r'^tag/(?P<tag>[^/]+)/?$', 'snippify.tags.views.view'),
-    #(r'^tag/(?P<tag>[^/]+)/(?P<username>[^/]+)/?$', 'snippify.tags.views.user'),
-    #(r'^tags/?$', 'snippify.tags.views.index'),
+    url(r'^tag/(?P<tag>[^/]+)/?$', snippets_views.tag_view, name="tag_view"),
+    url(r'^tag/(?P<tag>[^/]+)/(?P<username>[^/]+)/?$', snippets_views.tag_user,
+        name="tag_user"),
+    url(r'^tags/?$', snippets_views.tags_index, name="tags_index"),
 
     #(r'^api/snippet/create/?$', 'snippify.api.views.create'),
 
     #(r'^feeds/(?P<url>.*)/?$', 'django.contrib.syndication.views.feed', {'feed_dict': feeds}),
-    
+
     url(r'^admin/', include(admin.site.urls)),
 )

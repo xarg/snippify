@@ -260,6 +260,7 @@ def comment(request, id = None):
         else:
             data['error'] = 'You must login to post a comment'
         return JsonResponse(data)
+
 def search(request):
     data = {}
     data['query'] = request.GET.get('q', '')
@@ -277,6 +278,7 @@ def suggest(request):
         results_list.append(result.instance.title)
     data.append(results_list)
     return HttpResponse(json.dumps(data))
+
 def download(request, id=None):
     snippet = get_object_or_404(Snippet, pk=id)
     try:
@@ -290,3 +292,30 @@ def download(request, id=None):
     response['Content-Length'] = len(snippet.body)
     response['Content-Disposition'] = 'attachment; filename="' + filename + '"'
     return response
+
+def tags_index(request):
+    tags = Tag.objects.all()
+    return render_to_response('tags/index.html', {},
+                              context_instance=build_context(request))
+
+def tag_view(request, tag = None):
+    try:
+        tag_object = Tag.objects.get(name=tag)
+        snippets = TaggedItem.objects.get_by_model(Snippet, tag_object)
+    except:
+        snippets = None
+    return render_to_response('tags/view.html', {
+        'tag': tag,
+        'snippets': snippets
+        }, context_instance=build_context(request))
+
+def tag_user(request, tag = None, username = None):
+    try:
+        tag_object = Tag.objects.get(name=tag)
+        snippets = TaggedItem.objects.get_by_model(Snippet, tag_object)
+    except:
+        snippets = None
+    return render_to_response('tags/view.html', {
+        'tag': tag,
+        'snippets': snippets
+        }, context_instance=build_context(request))
