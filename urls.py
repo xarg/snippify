@@ -1,58 +1,55 @@
 from django.conf.urls.defaults import *
-from snippify.settings import URL
-from snippify.feeds import LatestSnippets, LatestTag, LatestUser
+#from snippify.feeds import LatestSnippets, LatestTag, LatestUser
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
 admin.autodiscover()
 
-feeds = {
-    'latest': LatestSnippets,
-    'tag' : LatestTag,
-    'user' : LatestUser
-}
+#feeds = {
+#    'latest': LatestSnippets,
+#    'tag' : LatestTag,
+#    'user' : LatestUser
+#}
 
 #Load search index
-import djapian
-djapian.load_indexes()
+#import djapian
+#djapian.load_indexes()
 
 #Django piston - doesn't work with CSRF
 #from piston.resource import Resource
 #from snippify.api.handlers import SnippetHandler, HttpBasicAuthentication
 #snippet_handler = Resource(SnippetHandler)
 
+from snippets import views as snippets_views
+
 urlpatterns = patterns('',
-    (r'^/?$', 'snippify.pages.views.index'),
+    url(r'^/?$', snippets_views.snippets_index, name="snippets_index"),
 
-    (r'^snippets/?$', 'snippify.snippets.views.index'),
-    (r'^(\d+)-?.*/?$', 'snippify.snippets.views.read'),
-    (r'^create/?$', 'snippify.snippets.views.create'),
-    (r'^update/(\d+)/?$', 'snippify.snippets.views.update'),
-    (r'^delete/(\d+)/?$', 'snippify.snippets.views.delete'),
-    (r'^download/(\d+)/?$', 'snippify.snippets.views.download'),
-    (r'^history/(\d+)/?$', 'snippify.snippets.views.history'),
-    (r'^comment/(\d+)/?$', 'snippify.snippets.views.comment'),
-    (r'^search-plugin.xml$', 'django.views.generic.simple.direct_to_template', {'template': 'snippets/search-plugin.xml', 'extra_context': {'SITE': URL}}),
-    (r'^search/?$', 'snippify.snippets.views.search'),
-    (r'^suggest/?$', 'snippify.snippets.views.suggest'),
+    url(r'^snippets/?$', snippets_views.index, name="snippets_my_index"),
+    url(r'^(\d+)-?.*/?$', snippets_views.read, name="snippets_read"),
+    url(r'^create/?$', snippets_views.create, name="snippets_create"),
+    url(r'^update/(\d+)/?$', snippets_views.update, name="snippets_update"),
+    url(r'^delete/(\d+)/?$', snippets_views.delete, name="snippets_delete"),
+    url(r'^download/(\d+)/?$', snippets_views.download,
+                                            name="snippets_download"),
+    url(r'^history/(\d+)/?$', snippets_views.history, name="snippets_history"),
+    url(r'^comment/(\d+)/?$', snippets_views.comment, name="snippets_comment"),
+    url(r'^search/?$', snippets_views.search, name="snippets_search"),
+    url(r'^suggest/?$', snippets_views.suggest, name="snippets_suggest"),
+
+    url(r'^search-plugin.xml$', 'django.views.generic.simple.direct_to_template',
+        {'template': 'snippets/search-plugin.xml', 'extra_context': {'SITE': ''}}),
 
 
-    (r'^account/', include('snippify.django_authopenid.urls')),
-    (r'^accounts/profile/','snippify.accounts.views.profile'),
-    (r'^accounts/edit/','snippify.accounts.views.edit'),
-    (r'^accounts/follow/(\w+)/?','snippify.accounts.views.follow'),
-    (r'^accounts/unfollow/(\w+)/?','snippify.accounts.views.unfollow'),
-    (r'^accounts/followers/(\w+)/?','snippify.accounts.views.followers'),
-    (r'^accounts/following/(\w+)/?','snippify.accounts.views.following'),
-    (r'^accounts/refresh_key/?','snippify.accounts.views.refresh_key'),
-    (r'^accounts/unsubscribe/?','snippify.accounts.views.unsubscribe'),
-    (r'^accounts/(\w+)/','snippify.accounts.views.user'),
+    url(r'^account/', include('django_authopenid.urls')),
+    url(r'^accounts/', include('accounts.urls')),
 
-    (r'^tag/(?P<tag>[^/]+)/?$', 'snippify.tags.views.view'),
-    (r'^tag/(?P<tag>[^/]+)/(?P<username>[^/]+)/?$', 'snippify.tags.views.user'),
-    (r'^tags/?$', 'snippify.tags.views.index'),
+    #(r'^tag/(?P<tag>[^/]+)/?$', 'snippify.tags.views.view'),
+    #(r'^tag/(?P<tag>[^/]+)/(?P<username>[^/]+)/?$', 'snippify.tags.views.user'),
+    #(r'^tags/?$', 'snippify.tags.views.index'),
 
-    (r'^api/snippet/create/?$', 'snippify.api.views.create'),
+    #(r'^api/snippet/create/?$', 'snippify.api.views.create'),
 
-    (r'^feeds/(?P<url>.*)/?$', 'django.contrib.syndication.views.feed', {'feed_dict': feeds}),
-    (r'^admin/', include(admin.site.urls)),
+    #(r'^feeds/(?P<url>.*)/?$', 'django.contrib.syndication.views.feed', {'feed_dict': feeds}),
+    
+    url(r'^admin/', include(admin.site.urls)),
 )

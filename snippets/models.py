@@ -5,8 +5,9 @@ from pygments import highlight
 from pygments.formatters import HtmlFormatter
 from pygments.lexers import guess_lexer, get_lexer_by_name, LEXERS
 
-from tagging.fields import TagField
-from tagging.models import Tag
+from taggit.managers import TaggableManager
+#from tagging.fields import TagField
+#from tagging.models import Tag
 
 ADDED_VIA = (
     ('web', 'Web'),
@@ -18,7 +19,7 @@ ADDED_VIA = (
 )
 
 # Search
-from djapian import space, Indexer
+#from djapian import space, Indexer
 
 #Other
 from datetime import datetime
@@ -65,48 +66,62 @@ class Snippet(models.Model):
             ('private', 'Private')
         )
     )
-    tags = TagField()
-    via = models.CharField(max_length = 50, default = 'web', choices = ADDED_VIA) # Used to provide some kind of stats
-    def __unicode__(self): return self.title
+    tags = TaggableManager()
+    # Used to provide some kind of stats
+    via = models.CharField(max_length=50,
+                           default='web',
+                           choices=ADDED_VIA)
+
+    def __unicode__(self):
+        return self.title
 
     def highlight(self, body = '', lexer = None):
         """ Parse a piece of text and hightlight it as html"""
         if not lexer:
             lexer = get_lexer_by_name(u'text')
         return highlight (body, lexer, HtmlFormatter(cssclass = 'source') )
+
+    #@models.permalink
     def get_absolute_url(self):
         return '/' + str(self.pk)
+
     class Meta:
         ordering = ['-created_date']
+
 class SnippetComment(models.Model):
     """ Django comment framework sucks! """
+
     snippet = models.ForeignKey(Snippet)
     user = models.ForeignKey(User)
     body = models.TextField()
     created_date = models.DateTimeField(default=datetime.now())
     class Meta:
         ordering = ['created_date']
+
 class SnippetVersion(models.Model):
     """ History for snippets! """
+
     snippet = models.ForeignKey(Snippet)
     version = models.IntegerField(default = 1)
     body = models.TextField()
     created_date = models.DateTimeField(default=datetime.now())
     class Meta:
         ordering = ['-version']
-class SnippetIndexer(Indexer):
-    """ Used by djapian """
-    fields = ['title', 'description', 'body', 'tags', 'lexer']
-    tags = [
-        ('author', 'author'),
-        ('pk', 'pk'),
-        ('created_date', 'created_date')
-    ]
-class TagIndexer(Indexer):
-    """ Used by djapian """
-    fields = ['name']
-    tags = [
-        ('name', 'name')
-    ]
-space.add_index(Snippet, SnippetIndexer, attach_as='indexer')
-space.add_index(Tag, TagIndexer, attach_as='indexer')
+
+
+#class SnippetIndexer(Indexer):
+#    """ Used by djapian """
+#    fields = ['title', 'description', 'body', 'tags', 'lexer']
+#    tags = [
+#        ('author', 'author'),
+#        ('pk', 'pk'),
+#        ('created_date', 'created_date')
+#    ]
+#class TagIndexer(Indexer):
+#    """ Used by djapian """
+#    fields = ['name']
+#    tags = [
+#        ('name', 'name')
+#    ]
+#space.add_index(Snippet, SnippetIndexer, attach_as='indexer')
+#space.add_index(Tag, TagIndexer, attach_as='indexer')

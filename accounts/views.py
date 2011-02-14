@@ -1,8 +1,12 @@
+import time
+import random
+import hashlib
+
 from django.conf import settings
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 
 from django.contrib.auth.models import User
-from django.contrib.auth.decorators import login_required # User to verify if user is authenticated
+from django.contrib.auth.decorators import login_required
 
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template.loader import render_to_string
@@ -12,18 +16,8 @@ from django import forms
 from snippify.snippets.models import Snippet
 from snippify.utils import build_context
 
-from snippify.django_authopenid.models import UserProfile
-from snippify.django_authopenid.models import UserFollow
-from snippify.emails.models import EmailQueue
-
-from tagging.models import Tag
-
-#Other
-import time
-import random
-import hashlib
-
-from logging import debug
+from models import UserProfile, UserFollow
+from django_emailqueue.models import EmailQueue
 
 @login_required
 def profile(request):
@@ -37,13 +31,9 @@ def profile(request):
         page = 1
     snippets = paginator.page(page).object_list
     for snippet in snippets_all:
-        try:
-            tag_list = Tag.objects.get_for_object(snippet)
-            for tag in tag_list:
-                if tag not in tags:
-                    tags.append(tag)
-        except:
-            pass
+        for tag in snippet.tags.all():
+            if tag not in tags:
+                tags.append(tag)
     try:
         profile_data = request.user.get_profile()
     except UserProfile.DoesNotExist:

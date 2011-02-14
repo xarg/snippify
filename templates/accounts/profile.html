@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-{% load tagging_tags %}
 {% block title %}My profile{% endblock %}
 {% block content %}
 <div id="sidebar" class="clearfix">
@@ -49,8 +48,7 @@
             <p>{{snippet.description}}</p>
             <p class="snippet-meta">Added on: <em>{{snippet.created_date|date:"d F Y"}}</em>
             {% if snippet.tags %}
-            {% tags_for_object snippet as tags %}
-            and tagged with: <em>{% for tag in tags %}<a href="/tag/{{tag}}">{{tag}}</a> {% endfor %}</em>
+            and tagged with: <em>{% for tag in snippet.tags %}<a href="/tag/{{tag}}">{{tag}}</a> {% endfor %}</em>
             {% endif %}
             </p>
             <a class="edit-link" href="/update/{{snippet.pk}}">edit</a>

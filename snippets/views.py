@@ -8,10 +8,10 @@ from django.shortcuts import get_object_or_404, render_to_response
 from django.http import HttpResponseRedirect, HttpResponse, Http404
 from django.template.loader import render_to_string
 
-from snippify.snippets.forms import SnippetForm
-from snippify.snippets.models import Snippet, SnippetVersion, SnippetComment
-from snippify.emails.models import EmailQueue
-from snippify.django_authopenid.models import UserProfile, UserFollow
+from forms import SnippetForm
+from models import Snippet, SnippetVersion, SnippetComment
+from django_emailqueue.models import EmailQueue
+from snippify.accounts.models import UserProfile, UserFollow
 
 from snippify.utils import build_context, JsonResponse
 
@@ -21,7 +21,6 @@ from pygments.lexers import guess_lexer, get_lexer_by_name, LEXERS
 from pygments.util import ClassNotFound
 
 #Other
-from logging import debug
 import difflib
 import json
 
@@ -222,6 +221,7 @@ def create(request):
     else:
         data['form'] = SnippetForm() # An unbound form
     return render_to_response('snippets/process.html', data, context_instance=build_context(request))
+
 def comment(request, id = None):
     """ Create a new comment. Django comments framework sucks ass! """
     if request.GET.get('delete'):

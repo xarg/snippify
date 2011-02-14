@@ -1,13 +1,13 @@
 {% extends "base.html" %}
-{% load tagging_tags %}
+<!--  load tagging_tags -->
 {% block title%}{% endblock%}
 {% block extra_scripts %}
 <script type="text/javascript" src="{{MEDIA_URL}}js/swfobject.js"></script>
 <script type="text/javascript">
-    {% tag_cloud_for_model snippets.snippet as cloud with steps=2 min_count=1 distribution=log %}
-    tagcloud = "%3Ctags%3E"
+
+    tagcloud = "%3Ctags%3E";
     {% for tag in cloud %}
-    tagcloud +='%3Ca href="http://snippify.me/tag/{{tag}}" class="tag-item" style="font-size: {{tag.font_size|add:"10"}}em"%3E{{tag}}%3C%2Fa%3E'
+    //tagcloud +='%3Ca href="http://snippify.me/tag/{{tag}}" class="tag-item" style="font-size: {{tag.font_size|add:"10"}}em"%3E{{tag}}%3C%2Fa%3E'
     {% endfor %}
     tagcloud +="%3C%2Ftags%3E"
     params = {
@@ -72,10 +72,7 @@ Share. Share the snippet with your teammates!
             <div class="tagcloud clearfix">
                 <!--[if gte IE 5]>
                     <div class="tag-cloud">
-                    {% tag_cloud_for_model snippets.snippet as cloud with steps=2 min_count=1 distribution=log %}
-                    {% for tag in cloud %}
-                        <a href="/tag/{{tag}}" class="tag-item" style="font-size: {{tag.font_size}}em">{{tag}}</a>
-                    {% endfor %}
+                    
                     </div>
                 <![endif]-->
                 <div id="flashcloud"></div>

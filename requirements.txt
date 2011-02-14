@@ -1,4 +1,8 @@
 django==1.2.5
 django_emailqueue
+mysql-python
+django-taggit
+python-openid
+pygments
 
-
+-e hg+https://bitbucket.org/benoitc/django-authopenid#egg=django-authopenid

@@ -10,9 +10,8 @@ USE_I18N = False
 MEDIA_ROOT = PROJECT_PATH + 'media/'
 ADMIN_MEDIA_PREFIX = '/media/'
 TEMPLATE_LOADERS = (
-    'django.template.loaders.filesystem.load_template_source',
-    'django.template.loaders.app_directories.load_template_source',
-#     'django.template.loaders.eggs.load_template_source',
+    'django.template.loaders.filesystem.Loader',
+    'django.template.loaders.app_directories.Loader',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
@@ -25,14 +24,16 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 )
 
 MIDDLEWARE_CLASSES = (
-    'firepy.django.middleware.FirePHPMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.doc.XViewMiddleware',
     'django_authopenid.middleware.OpenIDMiddleware',
+
     'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
 )
 
 ROOT_URLCONF = 'snippify.urls'
@@ -52,17 +53,18 @@ INSTALLED_APPS = tuple([
     'django.contrib.admin',
     'django.contrib.syndication',
     'django.contrib.flatpages',
-    'globaltags',
-    'tagging',
+
+    'taggit',
     'django_authopenid',
-    'djapian', #Should use haystack
+
     #'piston',
+    'globaltags',
+    'accounts',
     'snippets',
+
 ] + DEV_APPS)
 
-DJAPIAN_DATABASE_PATH = './djapian_spaces/'
-
 # My settings
-AUTH_PROFILE_MODULE = 'django_authopenid.UserProfile'
+AUTH_PROFILE_MODULE = 'accounts.UserProfile'
 LOGIN_REDIRECT_URL = '/accounts/profile'
 ACCOUNT_ACTIVATION_DAYS = 5

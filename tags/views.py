@@ -6,7 +6,7 @@ from django.http import HttpResponseRedirect, Http404, HttpResponse
 from snippify.snippets.models import Snippet
 from snippify.utils import build_context
 
-from tagging.models import Tag, TaggedItem
+#from tagging.models import Tag, TaggedItem
 
 #Other
 from logging import debug
