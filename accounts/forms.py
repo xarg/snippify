@@ -4,14 +4,15 @@ from django import forms
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
 
-from models import PRIVACY_CHOICES
+from snippify.utils import order_fields
+from models import PRIVACY_CHOICES, UserProfile
 
-class EditForm(forms.Form):
+class ProfileForm(forms.ModelForm):
     """ Profile edit form """
 
     email = forms.EmailField()
     location = forms.CharField(required=False, max_length=50)
-    url = forms.CharField(required=False, max_length=200)
+    url = forms.URLField(required=False, max_length=200)
     about = forms.CharField(required=False, max_length=500)
 
     """ E-mail notifications """
@@ -20,7 +21,7 @@ class EditForm(forms.Form):
                                           help_text="Notify me when someone"
                                           "starts following me")
     followed_user_created = forms.BooleanField(required=False,
-                                               label="Followed user submited"
+                                               label="Followed user submited "
                                                "snippet",
                                                help_text="Notify me when "
                                                "someone that I follow submits "
@@ -46,8 +47,13 @@ class EditForm(forms.Form):
     snippet_privacy = forms.ChoiceField(choices=PRIVACY_CHOICES,
                                         help_text="This is the default privacy"
                                         " setting when you add new snippets")
+    def __init__(self, *args, **kw):
+        super(ProfileForm, self).__init__(*args, **kw)
+        self.fields = order_fields(self.fields, ['email'])
 
-
+    class Meta:
+        model = UserProfile
+        exclude = ['user', 'user_shared', 'my_snippet_changed', 'restkey']
 
 attrs_dict = { 'class': 'login'}
 username_re = re.compile(r'^\w+$')
@@ -61,7 +67,8 @@ class OpenidRegisterForm(forms.Form):
     url = forms.URLField(max_length=200, required = False,
             widget=forms.widgets.TextInput(attrs=attrs_dict))
     location = forms.CharField(max_length=50, required = False,
-            widget=forms.widgets.TextInput(attrs=attrs_dict), help_text=u'Ex. Moscow, RU')
+            widget=forms.widgets.TextInput(attrs=attrs_dict),
+            help_text=u'Ex. Moscow, RU')
     about = forms.CharField(max_length=500, required = False,
             widget=forms.widgets.Textarea(attrs=attrs_dict))
 
@@ -88,6 +95,7 @@ class OpenidRegisterForm(forms.Form):
             self.user = user
             raise forms.ValidationError(_("This username is already \
                 taken. Please choose another."))
+
     def clean_email(self):
         """For security reason one unique email in database"""
         if 'email' in self.cleaned_data:

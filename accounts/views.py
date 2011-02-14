@@ -1,53 +1,51 @@
+""" Accounts views """
 import time
 import random
 import hashlib
 
-from django.conf import settings
-from django.core.paginator import Paginator, InvalidPage, EmptyPage
-
-from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-
+from django.contrib.auth.models import User
+from django.core.paginator import Paginator
+from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template.loader import render_to_string
-from django.http import HttpResponseRedirect, Http404
-from django import forms
+
+from django_emailqueue.models import EmailQueue
+from django_authopenid.signals import oid_register
 
 from snippify.snippets.models import Snippet
 from snippify.utils import build_context
 
 from models import UserProfile, UserFollow
-from django_emailqueue.models import EmailQueue
-
-from django_authopenid.signals import oid_register
+from forms import ProfileForm
 
 def register_account(form, _openid):
     """ create an account """
-    user = User.objects.create_user(form.cleaned_data['username'],
+    user_ob = User.objects.create_user(form.cleaned_data['username'],
                             form.cleaned_data['email'])
-    user.save()
+    user_ob.save()
     profile = UserProfile(
         user=user,
         location=form.cleaned_data['location'],
         url=form.cleaned_data['url'],
         about=form.cleaned_data['about'],
-        restkey=hashlib.sha1(str(random.random()) + 'snippify.me' + str(time.time())).hexdigest(),
+        restkey=hashlib.sha1("%s%s%s" % (str(random.random()), 'snippify.me',
+                                         str(time.time()))).hexdigest(),
     )
     profile.save()
-    user.backend = "django.contrib.auth.backends.ModelBackend"
+    user_ob.backend = "django.contrib.auth.backends.ModelBackend"
     oid_register.send(sender=user, openid=_openid)
     return user
 
 @login_required
-def profile(request):
+def view_profile(request):
+    """ Display profile info, such as snippets, tags, and followed users """
     tags = []
     snippets = {}
     snippets_all = snippets = Snippet.objects.filter(author=request.user)
     paginator = Paginator(snippets, 25)
-    try:
-        page = int(request.GET.get('page', '1'))
-    except:
-        page = 1
+    page = request.GET.get('page', '1')
+
     snippets = paginator.page(page).object_list
     for snippet in snippets_all:
         for tag in snippet.tags.all():
@@ -58,15 +56,20 @@ def profile(request):
     except UserProfile.DoesNotExist:
         profile_data = None
 
+    followed_users = None
     try:
-        followed_users = UserFollow.objects.select_related().filter(user=request.user).all()[0:14]
-    except:
-        followed_users = None
+        followed_users = UserFollow.objects.select_related().filter(
+            user=request.user).all()[0:14]
+    except IndexError:
+        pass
 
+    followers_list = None
     try:
-        followers = UserFollow.objects.select_related().filter(followed_user=request.user).all()[0:14]
-    except:
-        followers = None
+        followers_list = UserFollow.objects.select_related().filter(
+            followed_user=request.user).all()[0:14]
+    except IndexError:
+        pass
+
     return render_to_response(
         'accounts/profile.html',
         {
@@ -74,7 +77,7 @@ def profile(request):
             'tags': tags,
             'snippets': snippets,
             'followed_users': followed_users,
-            'followers': followers,
+            'followers': followers_list,
             'sidebared': True,
         },
         context_instance=build_context(request)
@@ -82,59 +85,51 @@ def profile(request):
 
 @login_required
 def edit(request):
+    """ Update UserProfile """
+
     if request.method == 'POST':
-        form = EditForm(request.POST) # A form bound to the POST data
+        form = ProfileForm(request.POST,
+                           instance=UserProfile.objects.get(user=request.user))
         if form.is_valid(): # All validation rules pass
+            try:
+                User.objects.filter(email=form.cleaned_data['email']).\
+                exclude(pk=request.user.pk).get()
+                request.session['flash'] = ['This e-mail is already in use',
+                                            'error']
+                return HttpResponseRedirect(
+                    request.META.get('HTTP_REFERER', '/'))
+            except User.DoesNotExist:#Check if the e-mail is not already in use
+                pass
             request.user.email = form.cleaned_data['email']
             request.user.save()
-
-            profile = UserProfile.objects.get(user=request.user)
-            profile.location = form.cleaned_data['location']
-            profile.url = form.cleaned_data['url']
-            profile.about = form.cleaned_data['about']
-            profile.user_follows_you = form.cleaned_data['user_follows_you']
-            profile.followed_user_created = form.cleaned_data['followed_user_created']
-            profile.user_commented = form.cleaned_data['user_commented']
-            #profile.user_shared = form.cleaned_data['user_shared']
-            #profile.my_snippet_changed = form.cleaned_data['my_snippet_changed']
-            profile.newsletter = form.cleaned_data['newsletter']
-            profile.profile_privacy = form.cleaned_data['profile_privacy']
-            profile.snippet_privacy = form.cleaned_data['snippet_privacy']
-
-            profile.save()
-            request.session['flash'] = ['Your profile has been updated', 'success']
+            form.save()
+            request.session['flash'] = ['Your profile has been updated',
+                                        'success']
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
     else:
-        profile = UserProfile.objects.get(user=request.user)
-        form = EditForm(initial = {
-            'email': request.user.email,
-            'location': profile.location,
-            'url': profile.url,
-            'about': profile.about,
-            'user_follows_you': profile.user_follows_you,
-            'followed_user_created': profile.followed_user_created,
-            'user_commented': profile.user_commented,
-            #'user_shared': profile.user_shared,
-            #'my_snippet_changed': profile.my_snippet_changed,
-            'newsletter': profile.newsletter,
-            'profile_privacy': profile.profile_privacy,
-            'snippet_privacy': profile.snippet_privacy,
-        })
-    return render_to_response('accounts/edit.html', {'form': form, }, context_instance=build_context(request))
+        form = ProfileForm(instance=UserProfile.objects.get(user=request.user),
+                           initial = {'email': request.user.email})
+    return render_to_response('accounts/edit.html', {'form': form},
+                              context_instance=build_context(request))
 
 @login_required
 def refresh_key(request):
-    """
-     Regenerate private REST key
-    """
+    """ Regenerate private REST key """
     profile = UserProfile.objects.get(user=request.user)
-    profile.restkey = hashlib.sha1(str(random.random()) + 'snippify.me' + str(time.time())).hexdigest()
+    profile.restkey = hashlib.sha1(str(random.random()) +
+                                   'snippify.me' +
+                                   str(time.time())).hexdigest()
     profile.save()
-
-    request.session['flash'] = ['Your private key has been refreshed, now update it in your plugin settings', 'success']
+    request.session['flash'] = ['Your private key has been refreshed, now '
+                                'update it in your plugin settings', 'success']
     return HttpResponseRedirect(request.META['HTTP_REFERER'])
 
 def user(request, username=None):
-    """Show user's profile"""
+    """
+
+    XXX: This should be combined with view_profile
+
+    """
     if username == request.user.username:
         return HttpResponseRedirect('/accounts/profile')
     userdata = get_object_or_404(User, username=username)
@@ -142,7 +137,8 @@ def user(request, username=None):
     if profile.profile_privacy == 'private':
         raise Http404
     try:
-        UserFollow.objects.filter(user=request.user, followed_user=userdata).get()
+        UserFollow.objects.filter(user=request.user,
+                                  followed_user=userdata).get()
         is_following = True
     except:
         is_following = False
@@ -150,7 +146,8 @@ def user(request, username=None):
         raise Http404
     tags = []
     snippets = {}
-    snippets_all = snippets = Snippet.objects.filter(author=userdata).filter(status='published').filter(privacy='public')
+    snippets_all = snippets = Snippet.objects.filter(author=userdata).filter(
+        status='published').filter(privacy='public')
     paginator = Paginator(snippets, 25)
     try:
         page = int(request.GET.get('page', '1'))
@@ -166,24 +163,25 @@ def user(request, username=None):
         except:
             pass
     try:
-        followed_users = UserFollow.objects.select_related().filter(user=userdata).all()[0:14]
+        followed_users = UserFollow.objects.select_related().filter(
+            user=userdata).all()[0:14]
     except:
         followed_users = None
 
     try:
-        followers = UserFollow.objects.select_related().filter(followed_user=userdata).all()[0:14]
+        followers_list = UserFollow.objects.select_related().filter(
+            followed_user=userdata).all()[0:14]
     except:
-        followers = None
+        followers_list = None
 
     return render_to_response(
-        'accounts/user.html',
-        {
+        'accounts/user.html', {
             'userdata': userdata,
             'profile': profile,
             'tags': tags,
             'snippets': snippets,
             'followed_users': followed_users,
-            'followers': followers,
+            'followers': followers_list,
             'is_following': is_following,
             'sidebared': True,
         },
@@ -214,18 +212,22 @@ def follow(request, follow_username = None):
                 queue.save()
         except:
             pass
-        request.session['flash'] = ['You started following ' + follow_user.username, 'success']
+        request.session['flash'] = ['You started following %s' %
+                                    follow_user.username, 'success']
     except:
         request.session['flash'] = ['This user does not exist', 'error']
     return HttpResponseRedirect(request.META['HTTP_REFERER'])
+
 @login_required
 def unfollow(request, follow_username = None):
     """ Stop following a user """
     try:
         follow_user = User.objects.get(username = follow_username)
-        followed_item = UserFollow.objects.get(user = request.user, followed_user = follow_user);
+        followed_item = UserFollow.objects.get(user = request.user,
+                                               followed_user = follow_user)
         followed_item.delete()
-        request.session['flash'] = ['You stoped following ' + follow_user.username, 'success']
+        request.session['flash'] = ['You stoped following %s' %
+                                    follow_user.username, 'success']
     except:
         request.session['flash'] = ['This user does not exist', 'error']
     return HttpResponseRedirect(request.META['HTTP_REFERER'])
@@ -236,23 +238,29 @@ def followers(request, username = None):
     data['userdata'] = get_object_or_404(User, username=username)
     data['attribute'] = 'user'
     try:
-        data['users'] = UserFollow.objects.select_related().filter(followed_user=data['userdata']).all()
+        data['users'] = UserFollow.objects.select_related().filter(
+            followed_user=data['userdata']).all()
     except:
         data['users'] = None
-    return render_to_response('accounts/followers.html', data,  context_instance=build_context(request))
+    return render_to_response('accounts/followers.html', data,
+                              context_instance=build_context(request))
+
 def following(request, username= None):
     """ Who is following username """
     data = {}
     data['userdata'] = get_object_or_404(User, username=username)
     data['attribute'] = 'followed_user'
     try:
-        data['users'] = UserFollow.objects.select_related().filter(user=data['userdata']).all()
+        data['users'] = UserFollow.objects.select_related().filter(
+            user=data['userdata']).all()
     except:
         data['users'] = None
-    return render_to_response('accounts/following.html', data,  context_instance=build_context(request))
+    return render_to_response('accounts/following.html', data,
+                              context_instance=build_context(request))
 
 def unsubscribe(request):
     """ Unsubscribe from all notifications and newsletter """
+
     key = request.GET.get('key', None)
     if key:
         try:
@@ -264,7 +272,9 @@ def unsubscribe(request):
             profile.my_snippet_changed = False
             profile.newsletter = False
             profile.save()
-            request.session['flash'] = ['You have been unsubscribed from all emails', 'success'];
-        except:
-            request.session['flash'] = ['The key is not correct. Contact the administrator.', 'error'];
+            request.session['flash'] = ['You have been unsubscribed from all '
+                                        'emails', 'success']
+        except UserProfile.DoesNotExist:
+            request.session['flash'] = ['The key is not correct. Contact the '
+                                        'administrator.', 'error']
     return HttpResponseRedirect('/')
