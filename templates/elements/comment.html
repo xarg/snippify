@@ -1,7 +1,7 @@
 <div class="comment-item" id="comment-item-{{comment.pk}}">
     <div class="comment-author">
-        <a href="/accounts/{{comment.user.username}}" class="gravatar">{% gravatar comment.user.email %}</a>
-        <a href="/accounts/{{comment.user.username}}">{{comment.user.username}}</a>
+        <a href="{% url accounts_user comment.user.username %}" class="gravatar">{% gravatar comment.user.email %}</a>
+        <a href="{% url accounts_user comment.user.username %}">{{comment.user.username}}</a>
         wrote {{comment.created_date|timesince}} ago:
     </div>
     {% if user.is_staff %}

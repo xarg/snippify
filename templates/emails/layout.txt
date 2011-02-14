@@ -1,6 +1,6 @@
 {% block content %}{% endblock %}
 
-Best regards,
+Cheers,
 Sasha
 
 --

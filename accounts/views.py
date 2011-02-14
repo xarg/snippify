@@ -38,47 +38,58 @@ def register_account(form, _openid):
     return user
 
 @login_required
-def view_profile(request):
+def view_profile(request, username=None):
     """ Display profile info, such as snippets, tags, and followed users """
-    tags = []
-    snippets = {}
-    snippets_all = snippets = Snippet.objects.filter(author=request.user)
+
+    if username is None or username == request.user.username:
+        user = request.user
+        my_profile = True
+    else:
+        user = get_object_or_404(User, username=username)
+        my_profile = False
+
+    try:
+        user_profile = UserProfile.objects.filter(user=user).get()
+    except UserProfile.DoesNotExist:
+        raise Http404
+
+    if user != request.user and user_profile.profile_privacy == 'private':
+        raise Http404
+    try:
+        UserFollow.objects.filter(user=request.user,
+                                  followed_user=user).get()
+        is_following = True
+    except:
+        is_following = False
+
+
+    snippets = Snippet.objects.filter(author=user)
     paginator = Paginator(snippets, 25)
     page = request.GET.get('page', '1')
 
-    snippets = paginator.page(page).object_list
-    for snippet in snippets_all:
+    tags = []
+    for snippet in snippets.all():
         for tag in snippet.tags.all():
             if tag not in tags:
                 tags.append(tag)
-    try:
-        profile_data = request.user.get_profile()
-    except UserProfile.DoesNotExist:
-        profile_data = None
 
-    followed_users = None
-    try:
-        followed_users = UserFollow.objects.select_related().filter(
-            user=request.user).all()[0:14]
-    except IndexError:
-        pass
+    followed_users = UserFollow.objects.select_related().filter(
+        user=user).all()[:14]
 
-    followers_list = None
-    try:
-        followers_list = UserFollow.objects.select_related().filter(
-            followed_user=request.user).all()[0:14]
-    except IndexError:
-        pass
+    followers_list = UserFollow.objects.select_related().filter(
+        followed_user=user).all()[:14]
 
     return render_to_response(
-        'accounts/profile.html',
-        {
-            'profile': profile_data,
+        'accounts/profile.html', {
+            'userdata': user,
+            'profile': user_profile,
             'tags': tags,
-            'snippets': snippets,
+            'snippets': paginator.page(page).object_list,
             'followed_users': followed_users,
             'followers': followers_list,
+            'is_following': is_following,
             'sidebared': True,
+            'my_profile': my_profile,
         },
         context_instance=build_context(request)
     )
@@ -123,70 +134,6 @@ def refresh_key(request):
     request.session['flash'] = ['Your private key has been refreshed, now '
                                 'update it in your plugin settings', 'success']
     return HttpResponseRedirect(request.META['HTTP_REFERER'])
-
-def user(request, username=None):
-    """
-
-    XXX: This should be combined with view_profile
-
-    """
-    if username == request.user.username:
-        return HttpResponseRedirect('/accounts/profile')
-    userdata = get_object_or_404(User, username=username)
-    profile = UserProfile.objects.filter(user=userdata).get()
-    if profile.profile_privacy == 'private':
-        raise Http404
-    try:
-        UserFollow.objects.filter(user=request.user,
-                                  followed_user=userdata).get()
-        is_following = True
-    except:
-        is_following = False
-    if not user:
-        raise Http404
-    tags = []
-    snippets = {}
-    snippets_all = snippets = Snippet.objects.filter(author=userdata).filter(
-        status='published').filter(privacy='public')
-    paginator = Paginator(snippets, 25)
-    try:
-        page = int(request.GET.get('page', '1'))
-    except:
-        page = 1
-    snippets = paginator.page(page).object_list
-    for snippet in snippets_all:
-        try:
-            tag_list = Tag.objects.get_for_object(snippet)
-            for tag in tag_list:
-                if tag not in tags:
-                    tags.append(tag)
-        except:
-            pass
-    try:
-        followed_users = UserFollow.objects.select_related().filter(
-            user=userdata).all()[0:14]
-    except:
-        followed_users = None
-
-    try:
-        followers_list = UserFollow.objects.select_related().filter(
-            followed_user=userdata).all()[0:14]
-    except:
-        followers_list = None
-
-    return render_to_response(
-        'accounts/user.html', {
-            'userdata': userdata,
-            'profile': profile,
-            'tags': tags,
-            'snippets': snippets,
-            'followed_users': followed_users,
-            'followers': followers_list,
-            'is_following': is_following,
-            'sidebared': True,
-        },
-        context_instance=build_context(request)
-    )
 
 @login_required
 def follow(request, follow_username = None):
