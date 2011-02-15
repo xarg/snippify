@@ -32,7 +32,6 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.doc.XViewMiddleware',
     'django_authopenid.middleware.OpenIDMiddleware',
-
     'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
 )
 
