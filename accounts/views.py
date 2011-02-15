@@ -20,7 +20,7 @@ from models import UserProfile, UserFollow
 from forms import ProfileForm
 
 def register_account(form, _openid):
-    """ create an account """
+    """This is a hook for creating an account called from django_authopenid"""
     user_ob = User.objects.create_user(form.cleaned_data['username'],
                             form.cleaned_data['email'])
     user_ob.save()
@@ -133,7 +133,7 @@ def refresh_key(request):
     profile.save()
     request.session['flash'] = ['Your private key has been refreshed, now '
                                 'update it in your plugin settings', 'success']
-    return HttpResponseRedirect(request.META['HTTP_REFERER'])
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
 @login_required
 def follow(request, follow_username = None):
@@ -163,7 +163,7 @@ def follow(request, follow_username = None):
                                     follow_user.username, 'success']
     except:
         request.session['flash'] = ['This user does not exist', 'error']
-    return HttpResponseRedirect(request.META['HTTP_REFERER'])
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
 @login_required
 def unfollow(request, follow_username = None):
@@ -177,7 +177,7 @@ def unfollow(request, follow_username = None):
                                     follow_user.username, 'success']
     except:
         request.session['flash'] = ['This user does not exist', 'error']
-    return HttpResponseRedirect(request.META['HTTP_REFERER'])
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
 def followers(request, username = None):
     """ Who are your followers Jesus? """
