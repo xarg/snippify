@@ -1,11 +1,7 @@
 # -*- coding: utf-8 -*-
-import datetime
-
 from django.db import models
 from django.contrib.auth.models import User
 
-from haystack import site, fields
-from haystack.indexes import SearchIndex
 from pygments import highlight
 from pygments.formatters import HtmlFormatter
 from pygments.lexers import guess_lexer, get_lexer_by_name, LEXERS
@@ -99,14 +95,3 @@ class SnippetVersion(models.Model):
 
     class Meta:
         ordering = ['-version']
-
-class SnippetIndexer(SearchIndex):
-    """ Haystack indexer """
-    text = fields.CharField(document=True, use_template=True)
-    created_date = fields.DateField(model_attr='created_date')
-    def get_queryset(self):
-        """Used when the entire index for model is updated."""
-        return Snippet.objects.filter(
-            created_date__lte=datetime.datetime.now())
-
-site.register(Snippet, SnippetIndexer)

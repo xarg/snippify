@@ -1,5 +1,5 @@
 from django.contrib import admin
-from snippify.snippets.models import Snippet
+from snippify.snippets.models import Snippet, SnippetComment, SnippetVersion
 
 class SnippetAdmin(admin.ModelAdmin):
     exclude = ('author','updated_date')
@@ -12,4 +12,12 @@ class SnippetAdmin(admin.ModelAdmin):
             obj.author = request.user
         obj.save()
 
+class SnippetCommentAdmin(admin.ModelAdmin):
+    list_display = ('snippet', 'user', 'created_date', )
+
+class SnippetVersionAdmin(admin.ModelAdmin):
+    list_display = ('snippet', 'version', 'created_date', )
+
 admin.site.register(Snippet, SnippetAdmin)
+admin.site.register(SnippetComment, SnippetCommentAdmin)
+admin.site.register(SnippetVersion, SnippetVersionAdmin)
