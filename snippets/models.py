@@ -1,13 +1,16 @@
+# -*- coding: utf-8 -*-
+import datetime
+
 from django.db import models
 from django.contrib.auth.models import User
 
+from haystack import site, fields
+from haystack.indexes import SearchIndex
 from pygments import highlight
 from pygments.formatters import HtmlFormatter
 from pygments.lexers import guess_lexer, get_lexer_by_name, LEXERS
-
 from taggit.managers import TaggableManager
-#from tagging.fields import TagField
-#from tagging.models import Tag
+
 
 ADDED_VIA = (
     ('web', 'Web'),
@@ -18,11 +21,15 @@ ADDED_VIA = (
     ('unknown', 'Unknown'),
 )
 
-# Search
-#from djapian import space, Indexer
+PRIVACY_CHOICES = (
+    ('public', 'Public'),
+    ('private', 'Private')
+)
 
-#Other
-from datetime import datetime
+STATUS_CHOICES = (
+    ('published', 'Published'),
+    ('unpublished', 'Unplublished')
+)
 
 def _lexer_names():
     ret = []
@@ -32,48 +39,38 @@ def _lexer_names():
     return tuple(ret)
 
 class Snippet(models.Model):
-    """
-        A snippet has one directory and many tags
-        @todo: comments
-        @todo: versions
-        @todo: pygments + autodiscovery
-    """
+    """A snippet with author and body"""
+
     author = models.ForeignKey(User)
-    title = models.CharField(max_length = 200, help_text = 'Ex. Django URL middleware')
-    description = models.TextField(blank = True, help_text = 'Short description of your snippet')
-    lexer = models.CharField(
-        max_length = 50,
-        blank = True,
-        choices = (_lexer_names()),
+    title = models.CharField(max_length=200,
+                             help_text='Ex. Django URL middleware')
+    description = models.TextField(blank = True,
+                                help_text='Short description of your snippet')
+    lexer = models.CharField(max_length=50, blank=True,
+                             choices = (_lexer_names()),
         help_text = 'Choose one language or let snippify find it for you'
     )
     body = models.TextField(help_text="Snippet code goes here")
-    created_date = models.DateTimeField(default = datetime.now())
+    created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(blank = True, null=True)
-    status = models.CharField(
-        max_length = 50,
-        default = 'published',
-        choices = (
-            ('published', 'Published'),
-            ('unpublished', 'Unplublished')
-        )
-    )
-    privacy = models.CharField(
-        max_length = 50,
-        default = 'public',
-        choices = (
-            ('public', 'Public'),
-            ('private', 'Private')
-        )
-    )
+    status = models.CharField(max_length = 50, default='published',
+                              choices = STATUS_CHOICES)
+    privacy = models.CharField(max_length=50, default='public',
+                               choices=PRIVACY_CHOICES)
+
     tags = TaggableManager()
     # Used to provide some kind of stats
-    via = models.CharField(max_length=50,
-                           default='web',
-                           choices=ADDED_VIA)
+    via = models.CharField(max_length=50, default='web', choices=ADDED_VIA)
 
     def __unicode__(self):
         return self.title
+
+    @models.permalink
+    def get_absolute_url(self):
+        return ('snippets_read', [self.pk], )
+
+    class Meta:
+        ordering = ['-created_date']
 
     def highlight(self, body = '', lexer = None):
         """ Parse a piece of text and hightlight it as html"""
@@ -81,20 +78,14 @@ class Snippet(models.Model):
             lexer = get_lexer_by_name(u'text')
         return highlight (body, lexer, HtmlFormatter(cssclass = 'source') )
 
-    #@models.permalink
-    def get_absolute_url(self):
-        return '/' + str(self.pk)
-
-    class Meta:
-        ordering = ['-created_date']
-
 class SnippetComment(models.Model):
     """ Django comment framework sucks! """
 
     snippet = models.ForeignKey(Snippet)
     user = models.ForeignKey(User)
     body = models.TextField()
-    created_date = models.DateTimeField(default=datetime.now())
+    created_date = models.DateTimeField(auto_now_add=True)
+
     class Meta:
         ordering = ['created_date']
 
@@ -102,26 +93,20 @@ class SnippetVersion(models.Model):
     """ History for snippets! """
 
     snippet = models.ForeignKey(Snippet)
-    version = models.IntegerField(default = 1)
+    version = models.IntegerField(default=1)
     body = models.TextField()
-    created_date = models.DateTimeField(default=datetime.now())
+    created_date = models.DateTimeField(auto_now_add=True)
+
     class Meta:
         ordering = ['-version']
 
+class SnippetIndexer(SearchIndex):
+    """ Haystack indexer """
+    text = fields.CharField(document=True, use_template=True)
+    created_date = fields.DateField(model_attr='created_date')
+    def get_queryset(self):
+        """Used when the entire index for model is updated."""
+        return Snippet.objects.filter(
+            created_date__lte=datetime.datetime.now())
 
-#class SnippetIndexer(Indexer):
-#    """ Used by djapian """
-#    fields = ['title', 'description', 'body', 'tags', 'lexer']
-#    tags = [
-#        ('author', 'author'),
-#        ('pk', 'pk'),
-#        ('created_date', 'created_date')
-#    ]
-#class TagIndexer(Indexer):
-#    """ Used by djapian """
-#    fields = ['name']
-#    tags = [
-#        ('name', 'name')
-#    ]
-#space.add_index(Snippet, SnippetIndexer, attach_as='indexer')
-#space.add_index(Tag, TagIndexer, attach_as='indexer')
+site.register(Snippet, SnippetIndexer)

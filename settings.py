@@ -55,8 +55,9 @@ INSTALLED_APPS = tuple([
 
     'taggit',
     'django_authopenid',
+    'haystack',
+    'piston',
 
-    #'piston',
     'globaltags',
     'accounts',
     'snippets',
@@ -67,3 +68,10 @@ INSTALLED_APPS = tuple([
 AUTH_PROFILE_MODULE = 'accounts.UserProfile'
 LOGIN_REDIRECT_URL = '/accounts/profile'
 ACCOUNT_ACTIVATION_DAYS = 5
+
+#Haystack stuff
+HAYSTACK_SITECONF = 'search_sites'
+HAYSTACK_SEARCH_ENGINE = 'whoosh'
+HAYSTACK_WHOOSH_PATH = PROJECT_PATH + '../tmp/index'
+
+from local_settings import *
