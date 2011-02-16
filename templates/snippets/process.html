@@ -6,35 +6,35 @@
 <h1>{% if snippet.pk %}Edit <a href="/{{snippet.pk}}">{{snippet.title}}</a>{% else %}Create snippet{% endif %}</h1>
 {% if preview_body %}
 <div class="snippet-title">
-    <h2>Preview {{ title }}</h2>
+	<h2>Preview {{ title }}</h2>
 </div>
 <div class="snippet-code highlight">
-        <table>
-            <tbody>
-                <tr>
-                    <td class="linenos" valign="top">
-                    <pre>{% for lineno in lines %}
+		<table>
+			<tbody>
+				<tr>
+					<td class="linenos" valign="top">
+					<pre>{% for lineno in lines %}
 {{lineno}}{% empty %}&nbsp;{% endfor%}</pre></td>
-                    <td class="code" valign="top">{% autoescape off %}{{preview_body}}{% endautoescape %}</td>
-                </tr>
-            </tbody>
-        </table>
+					<td class="code" valign="top">{% autoescape off %}{{preview_body}}{% endautoescape %}</td>
+				</tr>
+			</tbody>
+		</table>
     </div>
 {% endif %}
 <form id="process_snippet" action="" method="post" enctype="application/x-www-form-urlencoded">{% csrf_token %}
 {% for field in form %}
     <div class="input clearfix">
-        {{ field.errors }}
+		{{ field.errors }}
         {{ field.label_tag }}
         {{ field }}
         {% if field.help_text %}<p class="help_text">{{ field.help_text }}</p>{% endif %}
     </div>
 {% endfor %}
 <div class="submit">
-    <input type="hidden" name="referer" value="{{referer}}" />
-    <input type="submit" class="submit-button save" value="Save" />
-    <input type="submit" class="submit-button preview" name="preview" value="Preview" />
-    {% if snippet.pk %}<input type="submit" name="delete" class="submit-button delete" value="Delete" onclick="return confirm('Are you sure?');" />{% endif %}
+	<input type="hidden" name="referer" value="{{referer}}" />
+	<input type="submit" class="submit-button save" value="Save" />
+	<input type="submit" class="submit-button preview" name="preview" value="Preview" />
+	{% if snippet.pk %}<input type="submit" name="delete" class="submit-button delete" value="Delete" onclick="return confirm('Are you sure?');" />{% endif %}
 </div>
 </form>
 {% endblock %}

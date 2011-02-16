@@ -3,7 +3,8 @@
     <div class="latest-snippets clearfix">
         <h3><a href="{% url snippets_read snippet.pk %}-{{snippet.title|slugify}}">{{snippet.title}}</a></h3>
         <p>{{snippet.description|truncatewords:16}}&nbsp;</p>
-        <p class="snippet-meta">Added by <a href="{% url accounts_user snippet.author %}">{{snippet.author}}</a> {{snippet.created_date|timesince}} ago</p>
+        <p class="snippet-meta">Added by <a href="{% url accounts_user snippet.author %}">{{snippet.author}}</a>
+        {{snippet.created_date|timesince}} ago</p>
     </div>
     {% endfor %}
 {% endif %}
