@@ -334,6 +334,12 @@ textarea {
     padding:10px 0;
     border-bottom:1px dotted #ccc;
 }
+#change-style-container{
+    float: right;
+}
+#change-style-container label{
+    width: 100px;
+}
 .user-item .gravatar {
     padding:0;
 }

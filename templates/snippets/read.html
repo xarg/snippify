@@ -1,7 +1,6 @@
 {% extends "base.html" %}
-{% load tagging_tags %}
 {% block head %}
-<link rel="stylesheet" type="text/css" media="all" charset="utf-8" href="{{MEDIA_URL}}css/pygments.css"/>
+<link rel="stylesheet" type="text/css" media="all" charset="utf-8" href="{{MEDIA_URL}}css/pygments/{{request.user.get_profile.style}}.css" />
 {% endblock %}
 {% block extra_scripts %}
 <script type="text/javascript" src="{{MEDIA_URL}}js/snippets.js"></script>
@@ -27,8 +26,9 @@
         <div class="snippet-description">
             {{snippet.description|linebreaks}}
         </div>
-        <h6><em class="author">by <a href="/accounts/{{snippet.author}}">{{snippet.author}}</a></em> <em class="time-ago">{{snippet.created_date|timesince}} ago</em> and tagged with: {% tags_for_object snippet as tags %}
-            {% for tag in tags %}
+        <h6><em class="author">by <a href="/accounts/{{snippet.author}}">{{snippet.author}}</a></em>
+            <em class="time-ago">{{snippet.created_date|timesince}} ago</em> and tagged with:
+            {% for tag in snippet.tags.all %}
                 <a href="/tag/{{tag}}">{{tag}}</a>
             {% endfor %}
         </h6>
@@ -45,6 +45,16 @@
             </tbody>
         </table>
     </div>
+    <div id="change-style-container">
+        <label for="change-style">Change style:</label>
+        <select id="change-style">
+            {% for style in styles %}
+                <option {% if request.user.get_profile.style == style %}selected="selected"{% endif %}
+                        value="{{style}}">{{style}}</option>
+            {% endfor %}
+        </select>
+    </div>
+
     <div class="snippet-comments" id="snippet-comments">
         <h2>Currently {{comments.object_list.count}} comment{{comments.object_list.count|pluralize}}</h2>
         <div class="comment-list">

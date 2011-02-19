@@ -7,7 +7,6 @@ from pygments.formatters import HtmlFormatter
 from pygments.lexers import guess_lexer, get_lexer_by_name, LEXERS
 from taggit.managers import TaggableManager
 
-
 ADDED_VIA = (
     ('web', 'Web'),
     ('firefox', 'Firefox'),
@@ -68,11 +67,12 @@ class Snippet(models.Model):
     class Meta:
         ordering = ['-created_date']
 
-    def highlight(self, body = '', lexer = None):
+    def highlight(self, body='', lexer = None, style="friendly"):
         """ Parse a piece of text and hightlight it as html"""
         if not lexer:
             lexer = get_lexer_by_name(u'text')
-        return highlight (body, lexer, HtmlFormatter(cssclass = 'source') )
+        return highlight(body, lexer, HtmlFormatter(style=style,
+                                                    cssclass='source'))
 
 class SnippetComment(models.Model):
     """ Django comment framework sucks! """

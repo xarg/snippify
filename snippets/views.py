@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """ Snippets views """
+
 import difflib
 import json
 
@@ -7,6 +8,7 @@ from pygments import highlight
 from pygments.formatters import HtmlFormatter
 from pygments.lexers import guess_lexer, get_lexer_by_name, LEXERS
 from pygments.util import ClassNotFound
+from pygments.styles import get_all_styles
 
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage
@@ -15,6 +17,7 @@ from django.shortcuts import get_object_or_404, render_to_response
 from django.template.loader import render_to_string
 
 from django_emailqueue.models import EmailQueue
+from taggit.models import Tag
 
 from snippify.accounts.models import UserProfile
 from snippify.utils import build_context, JsonResponse
@@ -24,6 +27,7 @@ from models import Snippet, SnippetVersion, SnippetComment
 
 def snippets_index(request):
     """ Used for the front page. Return latest 5 snippets"""
+
     snippets = Snippet.objects.all()[:5]
     if snippets == None:
         snippets = []
@@ -33,31 +37,21 @@ def snippets_index(request):
 
 @login_required
 def index(request):
-    """ My snippets  """
+    """My snippets"""
+
     snippets = Snippet.objects.filter(author=request.user)
     return render_to_response('snippets/index.html', {'snippets': snippets},
                             context_instance=build_context(request))
 
-@login_required
-def delete(request, id=None):
-    """ Delete a snippet, only the author and staff can delete"""
-    snippet = get_object_or_404(Snippet, pk=id)
-    if snippet.author_id == request.user.id or request.user.is_staff:
-        snippet.delete()
-        request.session['flash'] = ['#%s deleted succesfully' % id, 'success']
-        return HttpResponseRedirect(request.META.get('HTTP_REFERER',
-                                                     '/accounts/profile'))
-    else:
-        request.session['flash'] = ['Access denied', 'error']
-        return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
-
 def read(request, id=None):
-    """ Show a snippet with title, tags and render pygments body"""
+    """Show a snippet with title, tags and render pygments body"""
+
     snippet = get_object_or_404(Snippet, pk=id)
-    if SnippetVersion.objects.filter(snippet = snippet).all():
+    if len(SnippetVersion.objects.filter(snippet=snippet).all()):
         versions = True
     else:
         versions = False
+
     comments_paginator = Paginator(SnippetComment.objects.filter(
                                                     snippet=snippet).all(), 2)
     try:
@@ -67,19 +61,18 @@ def read(request, id=None):
 
     snippet.highlight_body = snippet.highlight(snippet.body,
                                             get_lexer_by_name(snippet.lexer))
-    return render_to_response(
-        'snippets/read.html',
-        {
-            'snippet': snippet,
-            'comments': comments,
-            'versions': versions,
-            'lines': range(1, snippet.body.count('\n')+2),
-        },
-        context_instance=build_context(request)
-    )
+
+    return render_to_response('snippets/read.html', {
+                'snippet': snippet,
+                'comments': comments,
+                'versions': versions,
+                'styles': get_all_styles(),
+                'lines': range(1, snippet.body.count('\n')+2),
+            }, context_instance=build_context(request))
 
 def history(request, id = None):
     """ Show history list or display diff between two versions """
+
     snippet = get_object_or_404(Snippet, pk=id)
     if request.GET.get('v'):
         version = int(request.GET['v'])
@@ -218,6 +211,20 @@ def process(request, id=None):
             'snippet': snippet
         }, context_instance=build_context(request))
 
+@login_required
+def delete(request, id=None):
+    """Delete a snippet, only the author and staff can delete"""
+
+    snippet = get_object_or_404(Snippet, pk=id)
+    if snippet.author_id == request.user.id or request.user.is_staff:
+        snippet.delete()
+        request.session['flash'] = ['#%s deleted succesfully' % id, 'success']
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER',
+                                                     '/accounts/profile'))
+    else:
+        request.session['flash'] = ['Access denied', 'error']
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
 def comment(request, id = None):
     """ Create a new comment. Django comments framework sucks! """
 
@@ -268,6 +275,7 @@ def comment(request, id = None):
 
 def search(request):
     """ Search using haystack """
+
     data = {}
     data['query'] = request.GET.get('q', '')
     paginator = Paginator(Snippet.indexer.search(data['query']).prefetch(), 25)
@@ -280,6 +288,7 @@ def suggest(request):
     FF and maybe other browsers
 
     """
+
     data = []
     query = request.GET.get('q', '')
     results = Snippet.indexer.search(query).prefetch()
@@ -309,7 +318,6 @@ def download(request, id=None):
     return response
 
 # Tags views
-
 def tags_index(request):
     """ View for all tags """
 

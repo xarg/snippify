@@ -1,16 +1,22 @@
 from django.db import models
 from django.contrib.auth.models import User
+from pygments.styles import get_all_styles
 
+ALL_STYLES = tuple([(s, s) for s in get_all_styles()])
 PRIVACY_CHOICES = (
     ('public', 'Public'),
     ('private', 'Private')
 )
+
 
 class UserProfile(models.Model):
     user = models.ForeignKey(User, unique=True)
     location = models.CharField(max_length=50, blank=True)
     url = models.CharField(max_length=200, blank=True)
     about = models.CharField(max_length=500, blank=True)
+    style = models.CharField(max_length=200, default="friendly",
+                             choices=ALL_STYLES,
+                             help_text="Default pygments style")
 
     """
     Private key for REST API
