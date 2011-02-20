@@ -35,6 +35,7 @@ class TestViews(AccountsTestCase):
             'url': 'http://test.com/',
             'about': 'Some about text',
             'newsletter': 'checked',
+            'style': 'friendly',
             'profile_privacy': 'public',
             'snippet_privacy': 'private',
         })
@@ -100,3 +101,17 @@ class TestViews(AccountsTestCase):
         assert user_profile.user_shared == False
         assert user_profile.my_snippet_changed == False
         assert user_profile.newsletter == False
+
+
+    def test_update_field(self):
+        """ Test update some UserProfile field """
+
+        res = self.client.get(reverse("accounts_update_field"), {
+            'field':'style',
+            'value': 'monokai'
+        })
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.content, "OK")
+
+        user_profile = UserProfile.objects.get(user=self.user)
+        self.assertEqual(user_profile.style, 'monokai')

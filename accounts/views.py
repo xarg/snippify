@@ -6,7 +6,7 @@ import hashlib
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator
-from django.http import HttpResponseRedirect, Http404
+from django.http import HttpResponseRedirect, Http404, HttpResponse
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template.loader import render_to_string
 
@@ -134,6 +134,22 @@ def refresh_key(request):
     request.session['flash'] = ['Your private key has been refreshed, now '
                                 'update it in your plugin settings', 'success']
     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+@login_required
+def update_field(request):
+    """ Change UserProfile field usually through an ajax request """
+
+    field = request.GET.get('field', '')
+    value = request.GET.get('value')
+    user_profile = get_object_or_404(UserProfile, user=request.user)
+    if hasattr(user_profile, field):
+        setattr(user_profile, field, value)
+        try:
+            user_profile.save()
+            return HttpResponse("OK")
+        except:
+            return HttpResponse("ERROR")
+    return HttpResponse("ERROR")
 
 @login_required
 def follow(request, follow_username = None):

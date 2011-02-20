@@ -3,8 +3,12 @@
 <link rel="stylesheet" type="text/css" media="all" charset="utf-8" href="{{MEDIA_URL}}css/pygments/{{request.user.get_profile.style}}.css" />
 {% endblock %}
 {% block extra_scripts %}
-<script type="text/javascript" src="{{MEDIA_URL}}js/snippets.js"></script>
-<script type="text/javascript" src="{{ MEDIA_URL }}js/post-comment.js"></script>
+<script>
+    var UPDATE_FIELD_URL = "{% url accounts_update_field %}";
+</script>
+<script src="{{MEDIA_URL}}js/snippets.js"></script>
+<script src="{{ MEDIA_URL }}js/post-comment.js"></script>
+
 {% endblock %}
 {% block title %}#{{ snippet.pk }} - {{ snippet.title }}{% endblock %}
 {% block content %}
@@ -47,7 +51,7 @@
     </div>
     <div id="change-style-container">
         <label for="change-style">Change style:</label>
-        <select id="change-style">
+        <select name="style" id="change-style">
             {% for style in styles %}
                 <option {% if request.user.get_profile.style == style %}selected="selected"{% endif %}
                         value="{{style}}">{{style}}</option>
