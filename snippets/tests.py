@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """Functional tests"""
-import lxml.html
 
 from django.test import TestCase
 from django.core.urlresolvers import reverse
+from django.contrib.auth.models import User
 from models import Snippet, SnippetComment, SnippetVersion
 
 class SnippetsTestCase(TestCase):
@@ -38,20 +38,13 @@ class SnippetsTestCase(TestCase):
 class SnippetsViewsTests(SnippetsTestCase):
     """ Snippets views tests """
 
-    def test_basic_snippet(self):
-        """ Add, update, remove, test if pygments is working
-
-        XXX: Split this into multiple tests
-
-        """
-
-        #Add
-        response = self.client.get(reverse('snippify_create'))
+    def test_add_snippet(self):
+        """ """
+        response = self.client.get(reverse('snippets_create'))
         self.assertEqual(response.status_code, 200)
+
         #First one is search
-        form = lxml.html.document_fromstring(response.content).forms[1]
-        response = self.client.post(reverse('snippify_create'), {
-            'csrfmiddlewaretoken': form.fields['csrfmiddlewaretoken'],
+        response = self.client.post(reverse('snippets_create'), {
             'title': 'Snippet 3',
             'description': 'Snippet 3 4',
             'body': """#!/usr/bin/python
@@ -61,22 +54,26 @@ x=3
             'privacy': 'public',
             'tags': 'text'
         })
+
         self.assertEqual(response.status_code, 302)
         snippet = Snippet.objects.get(title="Snippet 3")
         #Pygments guessed the correct lexer
-        self.assertEqual('Snippet 3 (python)', str(snippet))
-
-        #Update
-        response = self.client.get(reverse('snippify_update', None,
-                                           [snippet.id]))
-        self.assertEqual(response.status_code, 200)
-        form = lxml.html.document_fromstring(response.content).forms[1]
-
-    def test_add_snippet(self):
-        """ """
+        self.assertEqual('Snippet 3', str(snippet))
 
     def test_update_snippet(self):
         """ """
+        title_text = "Update title"
+        response = self.client.post(
+            reverse('snippets_update', None, [self.snippet_text.pk]), {
+                "title": title_text,
+                "description": self.snippet_text.description,
+                "body": self.snippet_text.body,
+                'status': 'published',
+                'privacy': 'public',
+                'tags': 'text'
+            })
+        updated_snippet = Snippet.objects.get(pk=self.snippet_text.pk)
+        self.assertEqual(updated_snippet.title, title_text)
 
     def test_preview_add_snippet(self):
         """ """
@@ -99,9 +96,9 @@ x=3
     def test_download(self):
         """ Downloading snippet """
 
-
 class PistonTests(SnippetsTestCase):
     """ REST Tests """
 
 
-class TagTests(SnippetsTestCase)
+class TagTests(SnippetsTestCase):
+    """ Test tags """

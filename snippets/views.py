@@ -35,14 +35,6 @@ def snippets_index(request):
         'snippets': snippets, 'home_page': True },
                             context_instance=build_context(request))
 
-@login_required
-def index(request):
-    """My snippets"""
-
-    snippets = Snippet.objects.filter(author=request.user)
-    return render_to_response('snippets/index.html', {'snippets': snippets},
-                            context_instance=build_context(request))
-
 def read(request, id=None):
     """Show a snippet with title, tags and render pygments body"""
 
@@ -137,13 +129,21 @@ def history(request, id = None):
             }, context_instance=build_context(request))
 
 @login_required
+def index(request):
+    """My snippets"""
+
+    snippets = Snippet.objects.filter(author=request.user)
+    return render_to_response('snippets/index.html', {'snippets': snippets},
+                            context_instance=build_context(request))
+
+@login_required
 def process(request, id=None):
     """ Create/Update snippet """
 
     if id is not None:#Update
         snippet = get_object_or_404(Snippet, pk=id)
         form = SnippetForm(instance=snippet)
-        if request.user.is_staff or request.user.id != snippet.author_id:
+        if not request.user.is_staff or request.user != snippet.author:
             request.session['flash'] = ['Access denied', 'error']
             return HttpResponseRedirect('/accounts/profile/')
 
