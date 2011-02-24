@@ -8,7 +8,6 @@ PRIVACY_CHOICES = (
     ('private', 'Private')
 )
 
-
 class UserProfile(models.Model):
     user = models.ForeignKey(User, unique=True)
     location = models.CharField(max_length=50, blank=True)

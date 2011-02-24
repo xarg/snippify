@@ -25,7 +25,7 @@ def register_account(form, _openid):
                             form.cleaned_data['email'])
     user_ob.save()
     profile = UserProfile(
-        user=user,
+        user=user_ob,
         location=form.cleaned_data['location'],
         url=form.cleaned_data['url'],
         about=form.cleaned_data['about'],
@@ -34,8 +34,8 @@ def register_account(form, _openid):
     )
     profile.save()
     user_ob.backend = "django.contrib.auth.backends.ModelBackend"
-    oid_register.send(sender=user, openid=_openid)
-    return user
+    oid_register.send(sender=user_ob, openid=_openid)
+    return user_ob
 
 @login_required
 def view_profile(request, username=None):
