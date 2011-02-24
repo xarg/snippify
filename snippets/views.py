@@ -11,6 +11,7 @@ from pygments.util import ClassNotFound
 from pygments.styles import get_all_styles
 
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.core.paginator import Paginator, EmptyPage
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import get_object_or_404, render_to_response
@@ -321,30 +322,26 @@ def download(request, id=None):
 def tags_index(request):
     """ View for all tags """
 
-    tags = Tag.objects.all()
-    return render_to_response('tags/index.html', {},
+    return render_to_response('tags/index.html', {'tags': Tag.objects.all()},
                               context_instance=build_context(request))
 
-def tag_view(request, tag = None):
+def tag_view(request, tag):
     """ Show snippets of some tag """
-    try:
-        tag_object = Tag.objects.get(name=tag)
-        snippets = TaggedItem.objects.get_by_model(Snippet, tag_object)
-    except:
-        snippets = None
+
+    snippets = Snippet.objects.filter(tags__name__in=[tag, ]).all()
+
     return render_to_response('tags/view.html', {
         'tag': tag,
         'snippets': snippets
         }, context_instance=build_context(request))
 
-def tag_user(request, tag = None, username = None):
+def tag_user(request, tag, username):
     """ Display all `tag` snippets of `username` user """
 
-    try:
-        tag_object = Tag.objects.get(name=tag)
-        snippets = TaggedItem.objects.get_by_model(Snippet, tag_object)
-    except:
-        snippets = None
+    user = get_object_or_404(User, username)
+    snippets = Snippet.objects.filter(author=user).filter(
+        tags__name__in=[tag, ]).all()
+
     return render_to_response('tags/view.html', {
         'tag': tag,
         'snippets': snippets

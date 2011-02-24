@@ -54,6 +54,7 @@ INSTALLED_APPS = tuple([
     'django.contrib.flatpages',
 
     'taggit',
+    'taggit_templatetags',
     'django_authopenid',
     'haystack',
     'piston',
