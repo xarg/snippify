@@ -338,7 +338,7 @@ def tag_view(request, tag):
 def tag_user(request, tag, username):
     """ Display all `tag` snippets of `username` user """
 
-    user = get_object_or_404(User, username)
+    user = get_object_or_404(User, username=username)
     snippets = Snippet.objects.filter(author=user).filter(
         tags__name__in=[tag, ]).all()
 
