@@ -2,7 +2,7 @@ from django.contrib import admin
 from snippify.snippets.models import Snippet, SnippetComment, SnippetVersion
 
 class SnippetAdmin(admin.ModelAdmin):
-    exclude = ('author','updated_date')
+    exclude = ('author',)
     list_display = ('title', 'lexer', 'created_date', 'author')
     list_filter = ('lexer', 'author', )
     search_fields = ('title', 'body', )

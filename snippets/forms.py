@@ -1,8 +1,18 @@
 from django import forms
 from snippify.snippets.models import Snippet
 
-class SnippetForm(forms.ModelForm):
+class SnippetUpdateForm(forms.ModelForm):
     body = forms.Textarea(attrs={'class':'special', 'wrap': 'off'})
+    description = forms.CharField(widget=forms.widgets.Textarea(
+                                        attrs={'rows': 5}))
     class Meta:
         model = Snippet
-        exclude = ('author','created_date', 'updated_date', 'via')
+        exclude = ('author', 'via')
+
+class SnippetCreateForm(forms.ModelForm):
+    body = forms.Textarea(attrs={'class':'special', 'wrap': 'off'})
+    description = forms.CharField(widget=forms.widgets.Textarea(
+                                        attrs={'rows': 5}))
+    class Meta:
+        model = Snippet
+        exclude = ('author', 'via', 'status', 'privacy')

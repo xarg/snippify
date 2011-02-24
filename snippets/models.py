@@ -42,18 +42,19 @@ class Snippet(models.Model):
     description = models.TextField(blank = True,
                                 help_text='Short description of your snippet')
     lexer = models.CharField(max_length=50, blank=True,
+                             verbose_name="Language",
                              choices = (_lexer_names()),
         help_text = 'Choose one language or let snippify find it for you'
     )
     body = models.TextField(help_text="Snippet code goes here")
     created_date = models.DateTimeField(auto_now_add=True)
-    updated_date = models.DateTimeField(blank = True, null=True)
-    status = models.CharField(max_length = 50, default='published',
-                              choices = STATUS_CHOICES)
+    updated_date = models.DateTimeField(auto_now=True)
+    status = models.CharField(max_length=50, default='published',
+                              choices=STATUS_CHOICES)
     privacy = models.CharField(max_length=50, default='public',
                                choices=PRIVACY_CHOICES)
 
-    tags = TaggableManager()
+    tags = TaggableManager(blank=True)
     # Used to provide some kind of stats
     via = models.CharField(max_length=50, default='web', choices=ADDED_VIA)
 

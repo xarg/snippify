@@ -23,7 +23,7 @@ from taggit.models import Tag
 from snippify.accounts.models import UserProfile
 from snippify.utils import build_context, JsonResponse
 
-from forms import SnippetForm
+from forms import SnippetCreateForm, SnippetUpdateForm
 from models import Snippet, SnippetVersion, SnippetComment
 
 def snippets_index(request):
@@ -36,10 +36,10 @@ def snippets_index(request):
         'snippets': snippets, 'home_page': True },
                             context_instance=build_context(request))
 
-def read(request, id=None):
+def read(request, pk):
     """Show a snippet with title, tags and render pygments body"""
 
-    snippet = get_object_or_404(Snippet, pk=id)
+    snippet = get_object_or_404(Snippet, pk=pk)
     if len(SnippetVersion.objects.filter(snippet=snippet).all()):
         versions = True
     else:
@@ -63,10 +63,10 @@ def read(request, id=None):
                 'lines': range(1, snippet.body.count('\n')+2),
             }, context_instance=build_context(request))
 
-def history(request, id = None):
+def history(request, pk):
     """ Show history list or display diff between two versions """
 
-    snippet = get_object_or_404(Snippet, pk=id)
+    snippet = get_object_or_404(Snippet, pk=pk)
     if request.GET.get('v'):
         version = int(request.GET['v'])
         if version == 0:
@@ -138,74 +138,68 @@ def index(request):
                             context_instance=build_context(request))
 
 @login_required
-def process(request, id=None):
+def process(request, pk=None):
     """ Create/Update snippet """
 
-    if id is not None:#Update
-        snippet = get_object_or_404(Snippet, pk=id)
-        form = SnippetForm(instance=snippet)
-        if not request.user.is_staff or request.user != snippet.author:
+    if pk is not None: #Update
+        snippet = get_object_or_404(Snippet, pk=pk)
+        form = SnippetUpdateForm(instance=snippet)
+
+        if request.user != snippet.author and not request.user.is_staff:
             request.session['flash'] = ['Access denied', 'error']
             return HttpResponseRedirect('/accounts/profile/')
 
         if 'delete' in request.POST:
             snippet.delete()
-            request.session['flash'] = ['#%s deleted successfuly' % id,
+            request.session['flash'] = ['#%s deleted successfuly' % pk,
                                         'sucess']
             return HttpResponseRedirect('/accounts/profile/')
 
     else: #Create
         snippet = None
-        form = SnippetForm()
+        form = SnippetCreateForm()
 
     if request.method == 'POST':
-        form = SnippetForm(request.POST)#Bounding form to the POST data
+        if snippet is not None:
+            form = SnippetUpdateForm(request.POST, instance=snippet)
+        else:
+            form = SnippetCreateForm(request.POST)
+
         if not form.is_valid(): # redirect to form with errors
             return render_to_response('snippets/process.html', {
                 'form': form
                 }, context_instance=build_context(request))
 
-        formData = form.save(commit = False)
-        formData.pk = id
-        if 'preview' in request.POST:
-            data = {}
-            data['title'] = formData.title
-            data['preview_body'] = highlight(formData.body,
-                                            get_lexer_by_name(formData.lexer),
-                                            HtmlFormatter(cssclass = 'source'))
-            data['lines'] = range(1, formData.body.count('\n') + 2)
-            data['form'] = form
-            data['snippet'] = formData
-            return render_to_response('snippets/process.html', data,
-                                      context_instance=build_context(request))
-        else:#save
+        formData = form.save(commit=False)
+        if snippet is None:
             formData.author = request.user
-            if not formData.lexer:
-                try:
-                    lexer = guess_lexer(formData.body)
-                    for lex in LEXERS.itervalues():
-                        if lexer.name == lex[1]:
-                            formData.lexer = lex[2][0].lower()
-                except ClassNotFound:
-                    formData.lexer = 'text'
-            formData.save()
-            if snippet is not None and snippet.body != formData.body:
-                try:
-                    last_version =SnippetVersion.objects.order_by('-version').\
-                                            filter(snippet = snippet).all()[0]
-                    new_version = SnippetVersion(snippet = snippet,
-                                                 version =
-                                                 last_version.version + 1,
-                                                 body = snippet.body)
-                    new_version.save()
-                except:
-                    create_version = SnippetVersion(snippet = snippet,
-                                                    version = 1,
-                                                    body = snippet.body)
-                    create_version.save()
-            request.session['flash'] = ['#%s %s successfuly' % (formData.pk,
-                'update' if id is not None else 'created'), 'sucess']
-            return HttpResponseRedirect('/accounts/profile/')
+        if not formData.lexer:
+            try:
+                lexer = guess_lexer(formData.body)
+                for lex in LEXERS.itervalues():
+                    if lexer.name == lex[1]:
+                        formData.lexer = lex[2][0].lower()
+            except ClassNotFound:
+                formData.lexer = 'text'
+        formData.save()
+        form.save_m2m() #Save tags
+
+        if snippet is not None and snippet.body != formData.body:
+            #The body has changed - create a new version
+            try:
+                last_version = SnippetVersion.objects.order_by('-version').\
+                                        filter(snippet=snippet).all()[0]
+                version = SnippetVersion(snippet=snippet,
+                                         version=last_version.version + 1,
+                                         body=snippet.body)
+            except:
+                version = SnippetVersion(snippet=snippet,
+                                                version=1, body=snippet.body)
+            version.save()
+
+        request.session['flash'] = ['#%s %s successfuly' % (formData.pk,
+            'update' if pk is not None else 'created'), 'sucess']
+        return HttpResponseRedirect('/accounts/profile/')
     else:
         return render_to_response('snippets/process.html', {
             'form': form,
@@ -213,25 +207,25 @@ def process(request, id=None):
         }, context_instance=build_context(request))
 
 @login_required
-def delete(request, id=None):
+def delete(request, pk=None):
     """Delete a snippet, only the author and staff can delete"""
 
-    snippet = get_object_or_404(Snippet, pk=id)
-    if snippet.author_id == request.user.id or request.user.is_staff:
+    snippet = get_object_or_404(Snippet, pk=pk)
+    if request.user.is_staff or snippet.author == request.user:
         snippet.delete()
-        request.session['flash'] = ['#%s deleted succesfully' % id, 'success']
+        request.session['flash'] = ['#%s deleted succesfully' % pk, 'success']
         return HttpResponseRedirect(request.META.get('HTTP_REFERER',
                                                      '/accounts/profile'))
     else:
         request.session['flash'] = ['Access denied', 'error']
         return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
-def comment(request, id = None):
+def comment(request, pk=None):
     """ Create a new comment. Django comments framework sucks! """
 
     if request.GET.get('delete'):
         if request.user.is_staff:
-            get_object_or_404(SnippetComment, pk=id).delete()
+            get_object_or_404(SnippetComment, pk=pk).delete()
             request.session['flash'] = ['Comment deleted succesfully',
                                         'success']
         else:
@@ -240,7 +234,7 @@ def comment(request, id = None):
                                                      '/accounts/profile/'))
     else:
         data = {}
-        snippet = get_object_or_404(Snippet, pk=id)
+        snippet = get_object_or_404(Snippet, pk=pk)
         if request.user.is_authenticated:
             body = request.POST.get('body')
             if body:
@@ -300,10 +294,10 @@ def suggest(request):
     data.append(results_list)
     return HttpResponse(json.dumps(data))
 
-def download(request, id=None):
+def download(request, pk=None):
     """ Download snippet as text file """
 
-    snippet = get_object_or_404(Snippet, pk=id)
+    snippet = get_object_or_404(Snippet, pk=pk)
     try:
         file_extention = get_lexer_by_name(snippet.lexer).\
                                             filenames[0].split('*')[1]
