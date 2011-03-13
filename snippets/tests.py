@@ -2,8 +2,12 @@
 """Functional tests"""
 
 from django.test import TestCase
+from django.test.client import Client
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
+
+from snippify.accounts.models import UserProfile
+
 from models import Snippet, SnippetComment, SnippetVersion
 
 class SnippetsTestCase(TestCase):
@@ -115,5 +119,16 @@ class TagTests(SnippetsTestCase):
     def test_tag_user(self):
         """All user's snippets tagged with a specific tag"""
 
-class PistonTests(SnippetsTestCase):
-    """ REST Tests """
+class ApiTests(TestCase):
+    
+    def setUp(self):
+        self.client = Client(enforce_csrf_checks=True)
+        self.user = User.objects.create_user('test', 'test@email.com', 'test')
+        self.user.save()
+
+        user_profile = UserProfile(user=self.user, restkey='key')
+        user_profile.save()
+
+    def test_create(self):
+        self.client.get(reverse('api_create_snippet'), HTTP_RESTKEY='key')
+        import pdb; pdb.set_trace()
