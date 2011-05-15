@@ -1,4 +1,7 @@
 {% extends "base.html" %}
+{% block head %}
+<link rel="stylesheet" type="text/css" media="all" charset="utf-8" href="{{MEDIA_URL}}css/pygments/{{request.user.get_profile.style}}.css" />
+{% endblock %}
 {% block title %}Search results{% endblock %}
 {% block content %}
 
@@ -7,10 +10,21 @@
     <h1>Search results for '<strong>{{query|escape}}</strong>'</h1>
         {% for hit in results.object_list %}
             <div class="snippet-teaser">
-                <h3><a href="/{{ hit.instance.pk }}">{{ hit.instance }}</a></h3>
-                <p>{{hit.instance.description}}</p>
-                <p class="snippet-meta">Added on <em>{{hit.instance.created_date|date:"d F Y"}}</em>
-                by <a href="/accounts/{{ hit.instance.author }}">{{ hit.instance.author }}</a></p>
+                <h3><a href="/{{ hit.pk }}">{{ hit.object }}</a></h3>
+                <p>{{hit.object.description}}</p>
+                <div class="snippet-code highlight">
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td class="code" valign="top">
+                                    {% autoescape off %}{{hit.object.highlight}}{% endautoescape %}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="snippet-meta">Added on <em>{{hit.object.created_date|date:"d F Y"}}</em>
+                by <a href="/accounts/{{ hit.object.author }}">{{ hit.object.author }}</a></p>
             </div>
         {% endfor %}
     {% endif %}

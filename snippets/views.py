@@ -4,8 +4,6 @@
 import difflib
 import json
 
-from pygments import highlight
-from pygments.formatters import HtmlFormatter
 from pygments.lexers import guess_lexer, get_lexer_by_name, LEXERS
 from pygments.util import ClassNotFound
 from pygments.styles import get_all_styles
@@ -104,10 +102,6 @@ def history(request, pk):
         fromlines = str(body_1).splitlines(True)
         tolines = str(body_2).splitlines(True)
 
-        if len(fromlines) >= len(tolines):
-            no = len(fromlines) #XXX: this is unused
-        else:
-            no = len(tolines)
         diffbody = ''
         for line in difflib.unified_diff(fromlines, tolines,
                                          fromfile=version1_label,
@@ -268,12 +262,21 @@ def comment(request, pk=None):
             data['error'] = 'You must login to post a comment'
         return JsonResponse(data)
 
+def _search(query):
+    """ userd to fecth haystack results for searching """
+    from haystack.query import SearchQuerySet
+
+    if query != '':
+        query += '*'
+    sqs = SearchQuerySet()
+    return sqs.filter(text=sqs.query.clean(query))
+
 def search(request):
     """ Search using haystack """
-
     data = {}
-    data['query'] = request.GET.get('q', '')
-    paginator = Paginator(Snippet.indexer.search(data['query']).prefetch(), 25)
+    query = data['query'] = request.GET.get('q', '')
+    results = _search(query)
+    paginator = Paginator(results, 25)
     data['results'] = paginator.page(int(request.GET.get('page', 1)))
     return render_to_response('snippets/search.html', data,
                               context_instance=build_context(request))
@@ -286,11 +289,11 @@ def suggest(request):
 
     data = []
     query = request.GET.get('q', '')
-    results = Snippet.indexer.search(query).prefetch()
+    results = _search(query)
     data.append(query)
     results_list = []
     for result in results:
-        results_list.append(result.instance.title)
+        results_list.append(result.object.title)
     data.append(results_list)
     return HttpResponse(json.dumps(data))
 
