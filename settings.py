@@ -57,7 +57,6 @@ INSTALLED_APPS = tuple([
     'taggit_templatetags',
     'django_authopenid',
     'haystack',
-    'piston',
 
     'globaltags',
     'accounts',

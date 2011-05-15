@@ -1,29 +1,21 @@
+# -*- coding: utf-8 -*-
+
 from django.conf.urls.defaults import *
-#from snippify.feeds import LatestSnippets, LatestTag, LatestUser
-# Uncomment the next two lines to enable the admin:
 from django.contrib import admin
 admin.autodiscover()
 
-#feeds = {
-#    'latest': LatestSnippets,
-#    'tag' : LatestTag,
-#    'user' : LatestUser
-#}
-
-#Load search index
-#import djapian
-#djapian.load_indexes()
-
-#Django piston - doesn't work with CSRF
-#from piston.resource import Resource
-#from snippify.api.handlers import SnippetHandler, HttpBasicAuthentication
-#snippet_handler = Resource(SnippetHandler)
+#from feeds import LatestSnippets, LatestTag, LatestUser
 
 from snippets import views as snippets_views
 from accounts.forms import OpenidRegisterForm
 from accounts import views as auth_views
 from django_authopenid import views as oid_views
 
+#feeds = {
+#    'latest': LatestSnippets,
+#    'tag' : LatestTag,
+#    'user' : LatestUser
+#}
 
 urlpatterns = patterns('',
     url(r'^/?$', snippets_views.snippets_index, name="snippets_index"),
@@ -55,8 +47,6 @@ urlpatterns = patterns('',
     url(r'^tag/(?P<tag>[^/]+)/(?P<username>[^/]+)/?$', snippets_views.tag_user,
         name="tag_user"),
     url(r'^tags/?$', snippets_views.tags_index, name="tags_index"),
-
-    #(r'^api/snippet/create/?$', 'snippify.api.views.create'),
 
     #(r'^feeds/(?P<url>.*)/?$', 'django.contrib.syndication.views.feed', {'feed_dict': feeds}),
 
