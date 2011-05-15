@@ -70,7 +70,7 @@ class Snippet(models.Model):
 
     def highlight(self, body='', lexer = None, style="friendly"):
         """ Parse a piece of text and hightlight it as html"""
-        lexer = get_lexer_by_name(lexer if lexer else self.lexer)
+        lexer = lexer if lexer else get_lexer_by_name(self.lexer)
         if not body:
             body = self.body
         return highlight(body, lexer, HtmlFormatter(style=style,
