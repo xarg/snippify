@@ -32,9 +32,11 @@ urlpatterns = patterns('',
     url(r'^search/?$', snippets_views.search, name="snippets_search"),
     url(r'^suggest/?$', snippets_views.suggest, name="snippets_suggest"),
 
-    url(r'^search-plugin.xml$', 'django.views.generic.simple.direct_to_template',
-        {'template': 'snippets/search-plugin.xml', 'extra_context': {'SITE': ''}}),
-
+    url(r'^search-plugin.xml$',
+        'django.views.generic.simple.direct_to_template', {
+            'template': 'snippets/search-plugin.xml',
+            'extra_context': {'SITE': ''}
+        }, name="search_plugin"),
 
     url(r'^account/register/$', oid_views.register, {
         'register_form': OpenidRegisterForm,

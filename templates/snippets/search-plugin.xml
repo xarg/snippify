@@ -2,7 +2,7 @@
     <os:ShortName>Snippify.me</os:ShortName>
     <os:Description>Snippify.me snippets</os:Description>
     <os:InputEncoding>UTF-8</os:InputEncoding>
-    <os:Url type="text/html" method="GET" template="{{SITE}}search/?q={searchTerms}"></os:Url>
-    <os:Url type="application/x-suggestions+json" template="{{SITE}}suggest/?q={searchTerms}"></os:Url>
+    <os:Url type="text/html" method="GET" template="http://snippify.me/search/?q={searchTerms}"></os:Url>
+    <os:Url type="application/x-suggestions+json" template="http://snippify.me/suggest/?q={searchTerms}"></os:Url>
     <Image width="16" height="16" type="image/x-icon">{{MEDIA_URL}}images/favico.ico</Image>
 </SearchPlugin>
