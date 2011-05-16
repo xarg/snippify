@@ -1,0 +1,4 @@
+Snippets app
+==============
+
+.. automodule:: snippets

@@ -8,5 +8,4 @@ django-taggit-templatetags
 mysql-python
 python-openid
 pygments
-
 -e git+git://github.com/alex/django-taggit.git#egg=django-taggit
