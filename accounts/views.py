@@ -37,7 +37,6 @@ def register_account(form, _openid):
     oid_register.send(sender=user_ob, openid=_openid)
     return user_ob
 
-@login_required
 def view_profile(request, username=None):
     """ Display profile info, such as snippets, tags, and followed users """
 

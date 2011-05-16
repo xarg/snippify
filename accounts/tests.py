@@ -21,6 +21,18 @@ class AccountsTestCase(TestCase):
         user_profile = UserProfile(user=self.user2)
         user_profile.save()
 
+class TestAnonymousViews(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user('test', 'test@email.com', 'test')
+        self.user.save()
+
+        user_profile = UserProfile(user=self.user)
+        user_profile.save()
+
+    def test_view_profile(self):
+        res = self.client.get(reverse('accounts_user', args=['test']))
+        self.assertTrue(res.status_code, 200)
+
 class TestViews(AccountsTestCase):
     """ Test basic views methods """
 
