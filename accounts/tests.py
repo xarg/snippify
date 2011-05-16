@@ -33,6 +33,17 @@ class TestAnonymousViews(TestCase):
         res = self.client.get(reverse('accounts_user', args=['test']))
         self.assertTrue(res.status_code, 200)
 
+    def test_change_style(self):
+        """ Change pygments style for an anonymous user """
+
+        res = self.client.get(reverse("accounts_update_field"), {
+            'field':'style',
+            'value': 'monokai'
+        })
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.content, "OK")
+        self.assertEqual(self.client.session['style'], u'monokai')
+
 class TestViews(AccountsTestCase):
     """ Test basic views methods """
 
@@ -127,3 +138,11 @@ class TestViews(AccountsTestCase):
 
         user_profile = UserProfile.objects.get(user=self.user)
         self.assertEqual(user_profile.style, 'monokai')
+
+    def test_bad_update_field(self):
+        res = self.client.get(reverse("accounts_update_field"), {
+            'field':'user_id',
+            'value':'1'
+        })
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.content, 'ERROR: Not in allowed fields')

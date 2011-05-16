@@ -134,21 +134,32 @@ def refresh_key(request):
                                 'update it in your plugin settings', 'success']
     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
-@login_required
 def update_field(request):
-    """ Change UserProfile field usually through an ajax request """
+    """ Change UserProfile field usually through an ajax request.
+    If there the user is not logged in set the variable to the session instead
+    of the database.
 
+    """
+    allowed_fields = ('style', )
     field = request.GET.get('field', '')
     value = request.GET.get('value')
-    user_profile = get_object_or_404(UserProfile, user=request.user)
-    if hasattr(user_profile, field):
-        setattr(user_profile, field, value)
-        try:
-            user_profile.save()
-            return HttpResponse("OK")
-        except:
-            return HttpResponse("ERROR")
-    return HttpResponse("ERROR")
+
+    if field not in allowed_fields:
+        return HttpResponse('ERROR: Not in allowed fields')
+
+    request.session[field] = value
+
+    if not request.user.is_anonymous():
+        request.session[field] = value
+        user_profile = get_object_or_404(UserProfile, user=request.user)
+        if hasattr(user_profile, field):
+            setattr(user_profile, field, value)
+            try:
+                user_profile.save()
+                return HttpResponse("OK")
+            except:
+                return HttpResponse("ERROR")
+    return HttpResponse("OK")
 
 @login_required
 def follow(request, follow_username = None):

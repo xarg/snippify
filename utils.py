@@ -1,15 +1,26 @@
 import json
-import os
 
 from django.http import HttpResponse
-from django.template import RequestContext, loader, Context
+from django.conf import settings
+from django.template import RequestContext
 from django.utils.datastructures import SortedDict
 
+from pygments.styles import get_all_styles
 def build_context(request, extra_context = {}):
     """ Add flash message from session, and add some custom vars via
     extra_context"""
-    extra_context['current_path'] = request.get_full_path()
 
+    extra_context['current_path'] = request.get_full_path()
+    extra_context['pygments_styles'] = get_all_styles()
+
+    #Set default pygments style
+    if 'style' not in request.session:
+        if request.user.is_anonymous():
+            request.session['style'] = settings.DEFAULT_PYGMENTS_STYLE
+        else:
+            request.session['style'] = request.user.get_profile().style
+
+    #Set flash message
     if 'flash' in extra_context:
         del extra_context['flash']
     if 'flash' in request.session:

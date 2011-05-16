@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% block title %}#{{snippet.pk}} v{{version}}{% endblock %}
-{% block head %}<link rel="stylesheet" type="text/css" media="all" charset="utf-8" href="{{MEDIA_URL}}css/pygments.css"/>{% endblock %}
+{% block head %}
+<link rel="stylesheet" type="text/css" media="all" charset="utf-8" href="{{MEDIA_URL}}css/pygments/{{request.session.style}}.css" />
+{% endblock %}
 {% block extra_scripts %}<script type="text/javascript" src="{{MEDIA_URL}}js/snippets.js"></script>{% endblock %}
 {% block content %}
 <h1><a href="/{{snippet.pk}}">{{snippet.title}}</a> v{{version}}</h1>
@@ -18,4 +20,5 @@
         </table>
     </div>
 </div>
+{% include "elements/change_style.html" %}
 {% endblock %}
