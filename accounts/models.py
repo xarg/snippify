@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 from django.contrib.auth.models import User
 from pygments.styles import get_all_styles
 
@@ -13,7 +14,8 @@ class UserProfile(models.Model):
     location = models.CharField(max_length=50, blank=True)
     url = models.CharField(max_length=200, blank=True)
     about = models.CharField(max_length=500, blank=True)
-    style = models.CharField(max_length=200, default="friendly",
+    style = models.CharField(max_length=200,
+                             default=settings.DEFAULT_PYGMENTS_STYLE,
                              choices=ALL_STYLES,
                              help_text="Default pygments style")
 

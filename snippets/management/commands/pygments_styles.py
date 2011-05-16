@@ -5,7 +5,7 @@
 """
 import os
 from django.conf import settings
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 
 from pygments.formatters import HtmlFormatter
 from pygments.styles import get_all_styles

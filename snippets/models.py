@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 
 from pygments import highlight
 from pygments.formatters import HtmlFormatter
-from pygments.lexers import guess_lexer, get_lexer_by_name, LEXERS
+from pygments.lexers import get_lexer_by_name, LEXERS
 from taggit.managers import TaggableManager
 
 ADDED_VIA = (

@@ -1,0 +1,9 @@
+<div id="change-style-container">
+    <label for="change-style">Change style:</label>
+    <select name="style" id="change-style">
+        {% for style in pygments_styles %}
+            <option {% if request.session.style == style %}selected="selected"{% endif %}
+                    value="{{style}}">{{style}}</option>
+        {% endfor %}
+    </select>
+</div>

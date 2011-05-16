@@ -6,7 +6,6 @@ import json
 
 from pygments.lexers import guess_lexer, get_lexer_by_name, LEXERS
 from pygments.util import ClassNotFound
-from pygments.styles import get_all_styles
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -57,7 +56,6 @@ def read(request, pk):
                 'snippet': snippet,
                 'comments': comments,
                 'versions': versions,
-                'styles': get_all_styles(),
                 'lines': range(1, snippet.body.count('\n')+2),
             }, context_instance=build_context(request))
 

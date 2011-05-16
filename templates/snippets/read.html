@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block head %}
-<link rel="stylesheet" type="text/css" media="all" charset="utf-8" href="{{MEDIA_URL}}css/pygments/{{request.user.get_profile.style}}.css" />
+<link rel="stylesheet" type="text/css" media="all" charset="utf-8" href="{{MEDIA_URL}}css/pygments/{{request.session.style}}.css" />
 {% endblock %}
 {% block extra_scripts %}
 <script>
@@ -49,15 +49,8 @@
             </tbody>
         </table>
     </div>
-    <div id="change-style-container">
-        <label for="change-style">Change style:</label>
-        <select name="style" id="change-style">
-            {% for style in styles %}
-                <option {% if request.user.get_profile.style == style %}selected="selected"{% endif %}
-                        value="{{style}}">{{style}}</option>
-            {% endfor %}
-        </select>
-    </div>
+
+    {% include "elements/change_style.html" %}
 
     <div class="snippet-comments" id="snippet-comments">
         <h2>Currently {{comments.object_list.count}} comment{{comments.object_list.count|pluralize}}</h2>
