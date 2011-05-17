@@ -6,6 +6,9 @@
     {{userdata.username}}'s profile
     {% endif %}
 {% endblock %}
+{% block extra_feeds %}
+<link rel="alternate" type="application/rss+xml" href="{% url feeds 'user'%}/{{userdata.username}}" title="Latest {{userdata.username}}'s snippets">
+{% endblock %}
 {% block content %}
 <div id="sidebar" class="clearfix">
     <div class="profile-details">

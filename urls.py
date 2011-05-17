@@ -4,18 +4,18 @@ from django.conf.urls.defaults import *
 from django.contrib import admin
 admin.autodiscover()
 
-#from feeds import LatestSnippets, LatestTag, LatestUser
+from feeds import LatestSnippets, LatestTag, LatestUser
 
 from snippets import views as snippets_views
 from accounts.forms import OpenidRegisterForm
 from accounts import views as auth_views
 from django_authopenid import views as oid_views
 
-#feeds = {
-#    'latest': LatestSnippets,
-#    'tag' : LatestTag,
-#    'user' : LatestUser
-#}
+feeds = {
+    'latest': LatestSnippets,
+    'tag': LatestTag,
+    'user': LatestUser
+}
 
 urlpatterns = patterns('',
     url(r'^/?$', snippets_views.snippets_index, name="snippets_index"),
@@ -50,7 +50,8 @@ urlpatterns = patterns('',
         name="tag_user"),
     url(r'^tags/?$', snippets_views.tags_index, name="tags_index"),
 
-    #(r'^feeds/(?P<url>.*)/?$', 'django.contrib.syndication.views.feed', {'feed_dict': feeds}),
+    url(r'^feeds/(?P<url>.*)/?$', 'django.contrib.syndication.views.feed',
+        {'feed_dict': feeds}, name="feeds"),
 
     url(r'^admin/', include(admin.site.urls)),
 )

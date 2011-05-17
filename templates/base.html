@@ -9,7 +9,8 @@
     <link rel="shortcut icon" href="{{MEDIA_URL}}images/favico.ico" />
     <link rel="search" type="application/opensearchdescription+xml" title="Snippify.me" href="{% url search_plugin %}" />
     <link rel="stylesheet" media="all" charset="utf-8" href="{{MEDIA_URL}}css/base.css"/>
-
+    <link rel="alternate" type="application/rss+xml" href="{% url feeds 'latest' %}" title="Latest snippets feed">
+    {% block extra_feeds %}{% endblock %}
     {% block head %}{% endblock %}
 </head>
 <body>

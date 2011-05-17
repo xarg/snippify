@@ -1,5 +1,8 @@
 {% extends "base.html" %}
 {% block title %}{{tag}} snippets{% endblock%}
+{% block extra_feeds %}
+<link rel="alternate" type="application/rss+xml" href="{% url feeds 'tag'%}/{{tag}}" title="Latest snippets in {{tag}}">
+{% endblock %}
 {% block content %}
 <div class="snippet-list">
     <a href="{% url tags_index %}" class="righted">See all tags</a>
