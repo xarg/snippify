@@ -1,4 +1,4 @@
-""" """
+""" For now there are """
 from django.contrib.syndication.feeds import Feed, FeedDoesNotExist
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import User
@@ -8,6 +8,8 @@ from taggit.models import Tag
 from snippets.models import Snippet
 
 class LatestSnippets(Feed):
+    """ Get latest global snippets """
+
     title = u"Latest snippets"
     link = "/snippets/"
     description = "Updates on changes and additions to snippify"
@@ -16,7 +18,7 @@ class LatestSnippets(Feed):
         return Snippet.objects.order_by('-created_date')[:10]
 
 class LatestTag(Feed):
-    """ Get latest snippets from a specific tag"""
+    """Get latest snippets for a specific tag"""
 
     def get_object(self, bits):
         if len(bits) != 2:
@@ -43,7 +45,7 @@ class LatestTag(Feed):
                         order_by('-created_date')[:10]
 
 class LatestUser(Feed):
-    """ Get latest snippets from a specific user"""
+    """Get latest snippets for a specific user"""
 
     def get_object(self, bits):
         if len(bits) != 2:
