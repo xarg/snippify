@@ -4,6 +4,8 @@
 import difflib
 import json
 
+from pygments import highlight
+from pygments.formatters import HtmlFormatter
 from pygments.lexers import guess_lexer, get_lexer_by_name, LEXERS
 from pygments.util import ClassNotFound
 
@@ -197,6 +199,17 @@ def process(request, pk=None):
             'form': form,
             'snippet': snippet
         }, context_instance=build_context(request))
+
+def preview(request):
+    """This should respond with the html content of a snippet"""
+
+    body = request.GET.get('body', u'')
+    lexer = request.GET.get('lexer', u'text')
+    style = request.GET.get('lexer', u'friendly')
+
+    lexer_ob = get_lexer_by_name(lexer)
+    return HttpResponse(highlight(body, lexer_ob,
+                HtmlFormatter(style=style, cssclass='source')))
 
 @login_required
 def delete(request, pk=None):

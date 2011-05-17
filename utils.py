@@ -6,6 +6,7 @@ from django.template import RequestContext
 from django.utils.datastructures import SortedDict
 
 from pygments.styles import get_all_styles
+
 def build_context(request, extra_context = {}):
     """ Add flash message from session, and add some custom vars via
     extra_context"""
@@ -15,10 +16,11 @@ def build_context(request, extra_context = {}):
 
     #Set default pygments style
     if 'style' not in request.session:
-        if request.user.is_anonymous():
-            request.session['style'] = settings.DEFAULT_PYGMENTS_STYLE
-        else:
+        request.session['style'] = settings.DEFAULT_PYGMENTS_STYLE
+        try: #Attempt to set the style from the user profile
             request.session['style'] = request.user.get_profile().style
+        except:
+            pass
 
     #Set flash message
     if 'flash' in extra_context:

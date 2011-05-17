@@ -87,7 +87,17 @@ x=3
         self.assertEqual(updated_snippet.title, title_text)
 
     def test_preview_snippet(self):
-        """ """
+        """ When the user click the preview button an ajax request will be called
+        which returns a html content of the snippet"""
+
+        response = self.client.post(
+            reverse('snippets_preview', None, []), {
+                "body": self.snippet_text.body,
+                'lexer': u'text',
+                'style': u'friendly',
+            })
+        import pdb; pdb.set_trace()
+        self.assertEqual(response.status_code, 200)
 
     def test_comment_snippet(self):
         """ Comment on a specific snippet """
@@ -120,7 +130,6 @@ class TagTests(SnippetsTestCase):
         """All user's snippets tagged with a specific tag"""
 
 class ApiTests(TestCase):
-    
     def setUp(self):
         self.client = Client(enforce_csrf_checks=True)
         self.user = User.objects.create_user('test', 'test@email.com', 'test')

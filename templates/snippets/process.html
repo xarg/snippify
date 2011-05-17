@@ -9,6 +9,10 @@
 {% block head %}
 {% endblock %}
 {% block extra_scripts %}
+<script>
+    PREVIEW_URL = '{% url snippets_preview %}';
+</script>
+<script src="{{MEDIA_URL}}js/process_snippet.js"></script>
 {% endblock %}
 
 {% block content %}
