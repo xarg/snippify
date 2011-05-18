@@ -56,6 +56,7 @@ INSTALLED_APPS = tuple([
     'taggit',
     'taggit_templatetags',
     'django_authopenid',
+    'tastypie',
     'haystack',
 
     'globaltags',
@@ -74,5 +75,5 @@ HAYSTACK_SITECONF = 'search_sites'
 HAYSTACK_SEARCH_ENGINE = 'whoosh'
 
 DEFAULT_PYGMENTS_STYLE = 'friendly'
-
+API_LIMIT_PER_PAGE = 100
 from local_settings import *

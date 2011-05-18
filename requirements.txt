@@ -2,11 +2,10 @@ django==1.2.5
 django-haystack==1.1
 whoosh==1.7.1
 django_emailqueue==0.2
-django-piston==0.2.2
 django-authopenid==1.0.1
 django-taggit
 django-taggit-templatetags
+django-tastypie
 mysql-python
 python-openid
 pygments
-#-e git+git://github.com/alex/django-taggit.git#egg=django-taggit
