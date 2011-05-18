@@ -15,6 +15,7 @@ from django.core.paginator import Paginator, EmptyPage
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template.loader import render_to_string
+from django.views.decorators.csrf import csrf_exempt
 
 from django_emailqueue.models import EmailQueue
 from taggit.models import Tag
@@ -200,14 +201,21 @@ def process(request, pk=None):
             'snippet': snippet
         }, context_instance=build_context(request))
 
+@csrf_exempt
 def preview(request):
     """This should respond with the html content of a snippet"""
 
-    body = request.GET.get('body', u'')
-    lexer = request.GET.get('lexer', u'text')
-    style = request.GET.get('lexer', u'friendly')
-
-    lexer_ob = get_lexer_by_name(lexer)
+    body = request.POST.get('body', u'')
+    lexer = request.POST.get('lexer', u'')
+    if not lexer:
+        lexer = u'text'
+    style = request.POST.get('style', u'friendly')
+    if not style:
+        style = u'friendly'
+    try:
+        lexer_ob = get_lexer_by_name(lexer)
+    except:
+        lexer_ob = get_lexer_by_name(u'text')
     return HttpResponse(highlight(body, lexer_ob,
                 HtmlFormatter(style=style, cssclass='source')))
 

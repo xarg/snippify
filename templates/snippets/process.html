@@ -7,6 +7,7 @@
 	{% endif %}
 {% endblock %}
 {% block head %}
+<link rel="stylesheet" type="text/css" media="all" charset="utf-8" href="{{MEDIA_URL}}css/pygments/{{request.session.style}}.css" />
 {% endblock %}
 {% block extra_scripts %}
 <script>
@@ -23,6 +24,10 @@
 		Create snippet
 	{% endif %}
 </h1>
+<div id="preview_container">
+    <h2>Preview</h2>
+    <div id="preview_body"></div>
+</div>
 <form id="process_snippet" action="" method="post" enctype="application/x-www-form-urlencoded">{% csrf_token %}
 {% for field in form %}
     <div class="input clearfix">

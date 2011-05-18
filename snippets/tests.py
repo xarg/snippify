@@ -96,8 +96,8 @@ x=3
                 'lexer': u'text',
                 'style': u'friendly',
             })
-        import pdb; pdb.set_trace()
         self.assertEqual(response.status_code, 200)
+        self.assertTrue('This is a text snippet' in response.content)
 
     def test_comment_snippet(self):
         """ Comment on a specific snippet """

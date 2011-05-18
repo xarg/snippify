@@ -319,6 +319,10 @@ textarea {
 #container {
     width:705px;
 }
+
+#preview_container {
+    display: none;
+}
 .snippet-teaser h3 {
     padding-bottom:5px;
 }
