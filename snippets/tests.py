@@ -92,6 +92,20 @@ x=3
         updated_snippet = Snippet.objects.get(pk=self.snippet_text.pk)
         self.assertEqual(updated_snippet.title, title_text)
 
+    def test_create_admin(self):
+        """ Add a snippet from administration section """
+        title = 'a snippet'
+        body = 'body'
+        self.client.login(username='superuser', password='password')
+        self.client.post('/admin/snippets/snippet/add/',
+                        {'title': title, 'body': body})
+        snippet = Snippet.objects.get(title=title)
+        self.assertEqual(snippet.body, body)
+
+    def test_update_notification(self):
+        """ Create a user and then make him follow another user.
+        Update an existing snippet and check if the notification was sent. """
+
     def test_preview_snippet(self):
         """ When the user click the preview button an ajax request will be called
         which returns a html content of the snippet"""
@@ -105,9 +119,6 @@ x=3
         self.assertEqual(response.status_code, 200)
         self.assertTrue('This is a text snippet' in response.content)
 
-    def test_history(self):
-        """Check snippet versions"""
-
     def test_search(self):
         """ Test the search results """
 
@@ -119,6 +130,19 @@ x=3
 
     def test_delete(self):
         """Make sure it redirects properly"""
+
+class VersioningTestCase(SnippetsTestCase):
+    """ Versioning of snippets support. Check if diff works properly """
+
+    def test_create(self):
+        """ Update a snippet and check if the version is there"""
+
+    def test_view(self):
+        """ View a specific version """
+
+    def test_diff(self):
+        """ Update the same snippet the second time and check the diff
+        output"""
 
 class CommentsTestCase(SnippetsTestCase):
     """ Testing comments functionality """

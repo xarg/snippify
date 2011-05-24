@@ -49,14 +49,15 @@ class Snippet(models.Model):
     body = models.TextField(help_text="Snippet code goes here")
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
-    status = models.CharField(max_length=50, default='published',
+    status = models.CharField(blank=True, max_length=50, default='published',
                               choices=STATUS_CHOICES)
-    privacy = models.CharField(max_length=50, default='public',
+    privacy = models.CharField(blank=True, max_length=50, default='public',
                                choices=PRIVACY_CHOICES)
 
     tags = TaggableManager(blank=True)
     # Used to provide some kind of stats
-    via = models.CharField(max_length=50, default='web', choices=ADDED_VIA)
+    via = models.CharField(max_length=50, default='web', blank=True,
+                        choices=ADDED_VIA)
 
     def __unicode__(self):
         return self.title
