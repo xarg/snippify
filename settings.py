@@ -56,6 +56,7 @@ INSTALLED_APPS = tuple([
     'taggit',
     'taggit_templatetags',
     'django_authopenid',
+    'django_emailqueue',
     'tastypie',
     'haystack',
 

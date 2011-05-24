@@ -243,18 +243,18 @@ def comment(request, pk=None):
                                         'success']
         else:
             request.session['flash'] = ['Permission denied', 'error']
-        return HttpResponseRedirect(request.META.get('HTTP_REFERER',
-                                                     '/accounts/profile/'))
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
     else:
         data = {}
         snippet = get_object_or_404(Snippet, pk=pk)
-        if request.user.is_authenticated:
+        if request.user.is_authenticated():
             body = request.POST.get('body')
             if body:
                 comment = SnippetComment(snippet=snippet, user=request.user,
                                          body=body)
                 comment.save()
-                 # send notification if you are not the author
+                # send notification if you are not the author
+                # TODO: This code should be catched by an event handler
                 if snippet.author != request.user:
                     profile = UserProfile.objects.get(user=snippet.author)
                     #User wants to recieve a notification
@@ -268,7 +268,8 @@ def comment(request, pk=None):
                                     'username': request.user.username,
                                     'comment': comment,
                                     'snippet': snippet,
-                                    'SITE': request.META['HTTP_HOST']
+                                    'SITE': request.META.get('HTTP_HOST',
+                                        'localhost')
                                 }
                             )
                         )

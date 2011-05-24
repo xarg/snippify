@@ -7,14 +7,20 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 
 from snippify.accounts.models import UserProfile
+from django_emailqueue.models import EmailQueue
 
-from models import Snippet, SnippetComment, SnippetVersion
+from models import Snippet, SnippetComment
+
+import json
 
 class SnippetsTestCase(TestCase):
     def setUp(self):
         """ Create a user, superuser and few snippets """
         self.user = User.objects.create_user('user', 'user@email.com',
                                              'password')
+        user_profile = UserProfile(user=self.user, restkey='key')
+        user_profile.save()
+
         self.superuser = User.objects.create_superuser('superuser',
                                                        'superuser@email.com',
                                                        'password')
@@ -99,9 +105,6 @@ x=3
         self.assertEqual(response.status_code, 200)
         self.assertTrue('This is a text snippet' in response.content)
 
-    def test_comment_snippet(self):
-        """ Comment on a specific snippet """
-
     def test_history(self):
         """Check snippet versions"""
 
@@ -117,6 +120,62 @@ x=3
     def test_delete(self):
         """Make sure it redirects properly"""
 
+class CommentsTestCase(SnippetsTestCase):
+    """ Testing comments functionality """
+
+    def test_create(self):
+        """ Comment on a specific snippet """
+
+        body = u'this is a comment'
+        response = self.client.post(reverse('snippets_comment', None, [1]), {
+            'body': body
+        })
+        self.assertEqual(SnippetComment.objects.get(snippet=1).body, body)
+        self.assertTrue(body in json.loads(response.content)['content'])
+
+    def test_create_no_body(self):
+        """ """
+        response = self.client.post(reverse('snippets_comment', None, [1]))
+        self.assertEqual(len(SnippetComment.objects.all()), 0)
+        self.assertTrue('Body field is required' in response.content)
+
+    def test_create_notification(self):
+        """ If an user comments on another user's snippets then an notification
+        should be sent.
+
+        """
+        self.client.login(username='superuser', password='password')
+        self.test_create()
+        self.assertEqual(len(EmailQueue.objects.all()), 1)
+
+    def test_create_no_anonymous(self):
+        """ Anonymous users can't post comments """
+
+        self.client.logout()
+        response = self.client.post(reverse('snippets_comment', None, [1],),
+            {'body': 'a body'})
+        self.assertEqual(len(SnippetComment.objects.all()), 0)
+        self.assertEqual(u'You must login to post a comment',
+                         json.loads(response.content)['error'])
+
+    def test_delete(self):
+        """ Administrators should be able to delete comments """
+        self.test_create()
+        self.client.login(username='superuser', password='password')
+        response = self.client.get(reverse('snippets_comment',
+                        args=[1],) + '?delete=1', follow=True)
+        self.assertEqual(len(SnippetComment.objects.all()), 0)
+        self.assertTrue('Comment deleted succesfully' in response.content)
+
+    def test_delete_fail(self):
+        """ Users should NOT be able to delete comments """
+        self.test_create()
+        response = self.client.get(reverse('snippets_comment',
+                        args=[1],) + '?delete=1', follow=True)
+        self.assertEqual(len(SnippetComment.objects.all()), 1)
+        self.assertTrue('Permission denied' in response.content)
+
+
 class TagTests(SnippetsTestCase):
     """Test tag views"""
 
@@ -129,15 +188,7 @@ class TagTests(SnippetsTestCase):
     def test_tag_user(self):
         """All user's snippets tagged with a specific tag"""
 
-class ApiTests(TestCase):
-    def setUp(self):
-        self.client = Client(enforce_csrf_checks=True)
-        self.user = User.objects.create_user('test', 'test@email.com', 'test')
-        self.user.save()
-
-        user_profile = UserProfile(user=self.user, restkey='key')
-        user_profile.save()
+class ApiTests(SnippetsTestCase):
 
     def test_create(self):
-        self.client.get(reverse('api_create_snippet'), HTTP_RESTKEY='key')
-        import pdb; pdb.set_trace()
+        """" """
