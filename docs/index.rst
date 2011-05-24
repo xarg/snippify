@@ -33,6 +33,12 @@ Other
 
     glossary
 
+Contributors
+-------------
+
+* Alexandru Plugaru (alexandru.plugaru gmail com)
+* Andrei Zahariade (andrei random-pixels com)
+
 Indices and tables
 ==================
 
