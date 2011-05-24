@@ -1,0 +1,35 @@
+import os
+PROJECT_PATH = os.path.abspath(os.path.dirname(__file__)) + '/'
+
+DEBUG = False
+
+ADMINS = (
+
+)
+MANAGERS = ADMINS
+
+DEFAULT_FROM_EMAIL = 'robot@email.com'
+DEFAULT_REPLYTO_EMAIL = 'admin@email.com'
+
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+        'NAME': 'snippify',                      # Or path to database file if using sqlite3.
+        'USER': 'snippify',                      # Not used with sqlite3.
+        'PASSWORD': 'snippify',                  # Not used with sqlite3.
+        'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
+        'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
+    }
+}
+
+MEDIA_URL = 'http://localhost/snippify/media/'
+ADMIN_MEDIA_PREFIX = '/media/admin/'
+SECRET_KEY = ''
+
+HAYSTACK_WHOOSH_PATH = '/abs/path/tmp/index'
+
+DEV_APPS = [
+
+]
+
