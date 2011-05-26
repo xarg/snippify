@@ -4,6 +4,14 @@ from django.core.urlresolvers import reverse
 
 from models import UserProfile, UserFollow
 
+class OpenIdMock(object):
+    """ Stub the open id """
+    sreg = None
+    ax = None
+
+    def get(self, *args):
+        return None
+
 class AccountsTestCase(TestCase):
     def setUp(self):
         self.user = User.objects.create_user('test', 'test@email.com', 'test')
@@ -43,6 +51,21 @@ class TestAnonymousViews(TestCase):
         self.assertEqual(res.status_code, 200)
         self.assertEqual(res.content, "OK")
         self.assertEqual(self.client.session['style'], u'monokai')
+
+    def test_register(self):
+        #Call this to instantiate a session
+        self.client.get('/admin/')
+        session = self.client.session
+        openid_mock = OpenIdMock()
+        session['openid'] = openid_mock
+        session.save()
+        res = self.client.post(reverse('user_register'), {
+            'username': 'testuser',
+            'email': 'some@email.com',
+        })
+        self.assertEqual(res.status_code, 302)
+        self.assertEqual(User.objects.get(username='testuser').username,
+                        'testuser')
 
 class TestViews(AccountsTestCase):
     """ Test basic views methods """
