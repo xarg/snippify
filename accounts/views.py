@@ -21,6 +21,7 @@ from forms import ProfileForm
 
 def register_account(form, _openid):
     """This is a hook for creating an account called from django_authopenid"""
+
     user_ob = User.objects.create_user(form.cleaned_data['username'],
                             form.cleaned_data['email'])
     user_ob.save()
@@ -40,6 +41,7 @@ def register_account(form, _openid):
 def view_profile(request, username=None):
     """ Display profile info, such as snippets, tags, and followed users """
 
+    #Set current user and check if it's my profile
     if username is None or username == request.user.username:
         user = request.user
         my_profile = True
@@ -47,20 +49,27 @@ def view_profile(request, username=None):
         user = get_object_or_404(User, username=username)
         my_profile = False
 
+    #If a user is created from the administration it may not have a profile
     try:
         user_profile = UserProfile.objects.filter(user=user).get()
     except UserProfile.DoesNotExist:
         raise Http404
 
+    #Check if the profile is private
     if user != request.user and user_profile.profile_privacy == 'private':
         raise Http404
-    try:
-        UserFollow.objects.filter(user=request.user,
-                                  followed_user=user).get()
-        is_following = True
-    except:
-        is_following = False
 
+    #Check if the visiting user is following this user
+
+    if request.user.is_anonymous():
+        is_following = False
+    else:
+        try:
+            UserFollow.objects.filter(user=request.user).filter(
+                                                followed_user=user).get()
+            is_following = True
+        except UserFollow.DoesNotExist:
+            is_following = False
 
     snippets = Snippet.objects.filter(author=user)
     paginator = Paginator(snippets, 25)

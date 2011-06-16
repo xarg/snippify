@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
 
 from snippify.utils import order_fields
-from models import PRIVACY_CHOICES, UserProfile
+from models import UserProfile
 
 class ProfileForm(forms.ModelForm):
     """ Profile edit form """
@@ -45,32 +45,23 @@ class OpenidRegisterForm(forms.Form):
         """ test if username is valid and exist in database """
         if 'username' in self.cleaned_data:
             if not username_re.search(self.cleaned_data['username']):
-                raise forms.ValidationError(_("Usernames can only contain \
-                    letters, numbers and underscores"))
+                raise forms.ValidationError(_(u"Usernames can only contain "
+                                           "letters, numbers and underscores"))
             try:
-                user = User.objects.get(
-                        username__exact = self.cleaned_data['username']
-                )
+                User.objects.get(username__exact =\
+                        self.cleaned_data['username'])
             except User.DoesNotExist:
                 return self.cleaned_data['username']
-            except User.MultipleObjectsReturned:
-                raise forms.ValidationError(u'There is already more than one \
-                    account registered with that username. Please try \
-                    another.')
-            self.user = user
-            raise forms.ValidationError(_("This username is already \
-                taken. Please choose another."))
+            raise forms.ValidationError(_(u"This username is already taken. "
+                                            "Please choose another."))
 
     def clean_email(self):
         """For security reason one unique email in database"""
         if 'email' in self.cleaned_data:
             try:
-                user = User.objects.get(email = self.cleaned_data['email'])
+                User.objects.get(email = self.cleaned_data['email'])
             except User.DoesNotExist:
                 return self.cleaned_data['email']
-            except User.MultipleObjectsReturned:
-                raise forms.ValidationError(u'There is already more than one \
-                    account registered with that e-mail address. Please try \
-                    another.')
-            raise forms.ValidationError(_("This email is already \
-                registered in our database. Please choose another."))
+            raise forms.ValidationError(_(u"This email is already "
+                "registered in our database. Please choose another."))
+

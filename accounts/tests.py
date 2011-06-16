@@ -14,6 +14,10 @@ class OpenIdMock(object):
 
 class AccountsTestCase(TestCase):
     def setUp(self):
+        self.superuser = User.objects.create_superuser('admin',
+            'admin@admin.com', 'admin')
+        self.superuser.save()
+
         self.user = User.objects.create_user('test', 'test@email.com', 'test')
         self.user.save()
 
@@ -52,13 +56,19 @@ class TestAnonymousViews(TestCase):
         self.assertEqual(res.content, "OK")
         self.assertEqual(self.client.session['style'], u'monokai')
 
-    def test_register(self):
-        #Call this to instantiate a session
+    def _register_mock(self):
+        """ Call this to instantiate a session """
+        self.client.logout()
         self.client.get('/admin/')
         session = self.client.session
         openid_mock = OpenIdMock()
         session['openid'] = openid_mock
         session.save()
+
+    def test_register(self):
+        """ Register a new user """
+
+        self._register_mock()
         res = self.client.post(reverse('user_register'), {
             'username': 'testuser',
             'email': 'some@email.com',
@@ -67,12 +77,90 @@ class TestAnonymousViews(TestCase):
         self.assertEqual(User.objects.get(username='testuser').username,
                         'testuser')
 
+    def test_register_bad_username(self):
+        """ Try to register a user with bad username """
+        self._register_mock()
+        res = self.client.post(reverse('user_register'), {
+            'username': 'bad use r',
+            'email': 'some@email.com',
+        }, follow=True)
+        self.assertTrue("Usernames can only contain letters, numbers and "
+                        "underscores" in res.content)
+
+    def test_register_taken_username(self):
+        """ Try to register a user with 2 users with the same username"""
+
+        self._register_mock()
+        res = self.client.post(reverse('user_register'), {
+            'username': 'username',
+            'email': 'some@email.com',
+        }, follow=True)
+        self.assertEqual(User.objects.get(username='username').username,
+                        'username')
+
+        self._register_mock()
+        res = self.client.post(reverse('user_register'), {
+            'username': 'username',
+            'email': 'some1@email.com',
+        }, follow=True)
+        self.assertTrue(u"This username is already taken. "
+                         "Please choose another." in res.content)
+
+    def test_register_bad_email(self):
+        """ Try to register a user with bad e-mail """
+
+        self._register_mock()
+        res = self.client.post(reverse('user_register'), {
+            'username': 'username',
+            'email': 'some@ ecom',
+        }, follow=True)
+        self.assertTrue("Enter a valid e-mail address." in res.content)
+
+    def test_register_taken_email(self):
+        """ Try to register a user with 2 users with the same e-mail"""
+
+        self._register_mock()
+        res = self.client.post(reverse('user_register'), {
+            'username': 'username',
+            'email': 'some@email.com',
+        }, follow=True)
+
+        self._register_mock()
+        res = self.client.post(reverse('user_register'), {
+            'username': 'username1',
+            'email': 'some@email.com',
+        }, follow=True)
+        self.assertTrue(u"This email is already "
+        "registered in our database. Please choose another." in res.content)
+
 class TestViews(AccountsTestCase):
     """ Test basic views methods """
 
     def test_view_profile(self):
+        """ View a user's profile """
         res = self.client.get(reverse('accounts_profile'))
         self.assertTrue(res.status_code, 200)
+
+    def test_profile_404(self):
+        """There can be an administrator that doesn't have a profile """
+
+        res = self.client.get(reverse('accounts_user', args=['admin']))
+        self.assertTrue(res.status_code, 404)
+
+    def test_profile_private(self):
+        """ Set a profile as private and try to access it"""
+        user_profile = UserProfile.objects.get(user=self.user2)
+        user_profile.profile_privacy = 'private'
+        user_profile.save()
+
+        res = self.client.get(reverse('accounts_user',
+                            args=[self.user2.username]))
+        self.assertTrue(res.status_code, 404)
+
+    def test_view_edit_profile(self):
+        """ View edit profile form """
+        res = self.client.get(reverse('accounts_edit'))
+        self.assertEqual(res.status_code, 200)
 
     def test_edit_profile(self):
         """Submit form data"""
@@ -105,9 +193,11 @@ class TestViews(AccountsTestCase):
     def test_follow(self):
         """ test user follows user2 """
 
-        res = self.client.get(reverse('accounts_follow', args=['user2']))
+        self.client.get(reverse('accounts_follow', args=['user2']))
         self.assertEqual(UserFollow.objects.filter(user=self.user).filter(
                                   followed_user=self.user2).count(), 1)
+        res = self.client.get(reverse('accounts_user', args=['user2']))
+        self.assertTrue('1 followers' in res.content)
 
     def test_unfollow(self):
         """ test user unfollows user2 """
